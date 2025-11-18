@@ -30,7 +30,7 @@ class Grid:
             cost = {
                 'grass': 2,
                 'water': 5,
-                'wall': float('inf')  # Impassable
+                'wall': float('inf')  
             }
             self.data[(r, c)] = {'terrain': terrain, 'cost': cost}
 board=Grid(10,10)
