@@ -21,23 +21,38 @@ class Grid:
         self.rows = rows
         self.cols = cols
         self.data = {
-            (r, c): {'cost': self.TERRAIN_COST['gravel'], 'terrain': 'gravel', 'player': False}
+            (r, c): {
+                'cost': self.TERRAIN_COST['gravel'],
+                'terrain': 'gravel',
+                'occupied': False
+            }
             for r in range(rows) for c in range(cols)
         }
-        self.add_terrain(count=50, seed=42)
+        self.add_terrain(count=50)
 
     def __str__(self) -> str:
-        """Readable representation of a grid."""
-        return '\n'.join(
-            ' '.join(self.TERRAIN_SYMBOL[self.data[(r, c)]['terrain']] for c in range(self.cols))
-            for r in range(self.rows)
-        )
+        # Column header
+        header = '    ' + ' '.join(f'{c:2}' for c in range(self.cols)) + '\n'
+        lines = [header]
+    
+        for r in range(self.rows):
+            row = f'{r:2} | '   # Row header
+            for c in range(self.cols):
+                tile = self.data[(r, c)]
+                symbol = 'X' if tile.get('occupied') else self.TERRAIN_SYMBOL[tile['terrain']]
+                row += f'{symbol:2} '
+            lines.append(row)
+    
+        return '\n'.join(lines)
 
     def __repr__(self) -> str:
         """Representation of an object enabling grid reproduction."""
         return f"Grid(rows={self.rows}, cols={self.cols})"
+    def __len__(self) -> int:
+        """Return number of tiles"""
+        return len(self.data)
 
-    def add_terrain(self, count: int = 30, seed: int | None = None) -> None:
+    def add_terrain(self, count: int = 50, seed: int | None = None) -> None:
         """Randomly assigns terrain and cost to `count` unique tiles.
         Seed parameter enables same map output"""
         if seed is not None:
@@ -55,11 +70,13 @@ class Grid:
                 'cost': self.TERRAIN_COST[terrain]
             }
             used.add((r, c))
-    def move(self, coords:tuple[int,int], obj='x')->None:
+    def move(self, coords:tuple[int,int], obj='X')->None:
         """Update position on a board."""
-        
+        if self.data[coords]['terrain'] != '#':
+            self.data[coords]['occupied'] = True
         
         
 if __name__ == '__main__':
-    board=Grid(20,20)
-    print(board.TERRAIN_COST['wall'])
+    board=Grid(10,20)
+    board.move((0,0))
+    print(board)
