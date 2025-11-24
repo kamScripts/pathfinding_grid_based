@@ -1,3 +1,5 @@
+"""
+First Structure to form grid-map, deprecated after implementing a Graph ADT."""
 import random
 
 class Grid:
@@ -62,21 +64,24 @@ class Grid:
         while len(used) < count:
             r = random.randint(0, self.rows - 1)
             c = random.randint(0, self.cols - 1)
+            # skip already replaced tiles
             if (r, c) in used:
                 continue
             terrain = random.choice(self.TERRAIN)
             self.data[(r, c)] = {
                 'terrain': terrain,
-                'cost': self.TERRAIN_COST[terrain]
+                'cost': self.TERRAIN_COST[terrain],
+                'occupied': self.data[(r, c)]['occupied']
             }
             used.add((r, c))
     def move(self, coords:tuple[int,int], obj='X')->None:
         """Update position on a board."""
-        if self.data[coords]['terrain'] != '#':
+        if self.data[coords]['terrain'] != 'wall':
             self.data[coords]['occupied'] = True
         
         
 if __name__ == '__main__':
     board=Grid(10,20)
+    print(board.data.get((0,0)))
     board.move((0,0))
     print(board)
