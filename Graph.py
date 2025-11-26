@@ -121,12 +121,12 @@ def create_grid_graph(width, height, terrain_cost_func):
     # Add horizontal and vertical edges
     for row in range(height):
         for col in range(width):
-            # Right neighbor
+            # Right neighbour
             if col + 1 < width:
                 cost = terrain_cost_func(row, col, row, col + 1)
                 g.add_edge((row, col), (row, col + 1), cost)
 
-            # Down neighbor
+            # Down neighbour
             if row + 1 < height:
                 cost = terrain_cost_func(row, col, row + 1, col)
                 g.add_edge((row, col), (row + 1, col), cost)
@@ -170,9 +170,9 @@ def print_grid_graph(g: Graph, path: list[tuple[int, int]] = None):
                 continue
 
             if coords in path_set:
-                node_line += "\033[96m●\033[0m"
+                node_line += "\033[91m●\033[0m"
             else:
-                node_line += "●"
+                node_line += "\u25CB"
 
             # Horizontal edge
             right_coords = (row, col + 1)
@@ -180,13 +180,13 @@ def print_grid_graph(g: Graph, path: list[tuple[int, int]] = None):
             if right_node and right_node in node.neighbours:
                 cost = node.neighbours[right_node]
                 color = (
-                    "\033[92m" if cost == 1.0 else
-                    "\033[93m" if cost == 1.5 else
-                    "\033[91m" if cost == 5.0 else
+                    "\033[90m" if cost == 1.0 else
+                    "\033[32m" if cost == 1.5 else
+                    "\033[33m" if cost == 5.0 else
                     "\033[0m"
                 )
                 if coords in path_set and right_coords in path_set:
-                    node_line += "\033[96m----\033[0m"
+                    node_line += "\033[91m----\033[0m"
                 else:
                     node_line += f"{color}----\033[0m"
             else:
@@ -198,13 +198,13 @@ def print_grid_graph(g: Graph, path: list[tuple[int, int]] = None):
             if down_node and down_node in node.neighbours:
                 cost = node.neighbours[down_node]
                 color = (
-                    "\033[92m" if cost == 1.0 else
-                    "\033[93m" if cost == 1.5 else
-                    "\033[91m" if cost == 5.0 else
+                    "\033[90m" if cost == 1.0 else
+                    "\033[32m" if cost == 1.5 else
+                    "\033[33m" if cost == 5.0 else
                     "\033[0m"
                 )
                 if coords in path_set and down_coords in path_set:
-                    edge_line += "\033[96m|    \033[0m"
+                    edge_line += "\033[91m|    \033[0m"
                 else:
                     edge_line += f"{color}|    \033[0m"
             else:
