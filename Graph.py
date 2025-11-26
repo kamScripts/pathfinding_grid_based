@@ -66,6 +66,26 @@ class Graph:
             del origin_node.neighbours[d_node]
         if origin_node in d_node.neighbours:
             del d_node.neighbours[origin_node]
+    def disconnect_node(self, coords: tuple[int, int]) -> None:
+        """
+        Disconnect a node from the graph by removing all its edges.
+        The node remains in the graph but becomes isolated.
+    
+        Parameters
+        ----------
+        coords : tuple[int, int]
+            Coordinates of the node to disconnect.
+        """
+        node = self.node_at(coords)
+        if not node:
+            raise ValueError(f"Node at {coords} not found")
+    
+        # Remove references from all neighbours
+        for neighbour in list(node.neighbours.keys()):
+            del neighbour.neighbours[node]
+    
+        # Clear this node's neighbour list
+        node.neighbours.clear()
     def neighbours(self, coords):
         """Return an iteration of all valid endpoints and weights"""
         node = self.node_at(coords)
@@ -92,12 +112,12 @@ def create_grid_graph(width, height, terrain_cost_func):
     Creates a 4-connected grid graph with proper undirected edges (no duplicates).
     """
     g = Graph(width, height)
-    
+
     # Add all nodes
     for row in range(height):
         for col in range(width):
             g.add_node((row, col))
-    
+
     # Add horizontal and vertical edges
     for row in range(height):
         for col in range(width):
@@ -105,14 +125,13 @@ def create_grid_graph(width, height, terrain_cost_func):
             if col + 1 < width:
                 cost = terrain_cost_func(row, col, row, col + 1)
                 g.add_edge((row, col), (row, col + 1), cost)
-            
+
             # Down neighbor
             if row + 1 < height:
                 cost = terrain_cost_func(row, col, row + 1, col)
                 g.add_edge((row, col), (row + 1, col), cost)
-    
-    return g
 
+    return g
 
 def terrain_cost(
     row_from: int, col_from: int,
@@ -130,24 +149,74 @@ def terrain_cost(
     else:
         return 5.0   # very rough terrain
 
+def print_grid_graph(g: Graph, path: list[tuple[int, int]] = None):
+    """
+    Print ASCII grid with colored edges and optional path overlay.
+    Preserves spacing even when nodes/edges are removed.
+    """
+    path_set = set(path) if path else set()
 
-
-def print_grid_graph(g: Graph, terrain_func):
-    """Print ASCII grid with terrain costs."""
     for row in range(g._height):
-        line = []
+        node_line = ""
+        edge_line = ""
         for col in range(g._width):
-            cost = terrain_func(row, col, row, col)  # self-cost
-            if cost == 1:
-                line.append(".")   # flat terrain
-            elif cost == 5:
-                line.append("~")   # very rough terrain
+            coords = (row, col)
+            node = g.node_at(coords)
+
+            # Node symbol (or placeholder if removed)
+            if not node:
+                node_line += "   "  # keep spacing
+                edge_line += "     "
+                continue
+
+            if coords in path_set:
+                node_line += "\033[96m●\033[0m"
             else:
-                line.append("#")   # rough
-        print("".join(line))
+                node_line += "●"
 
+            # Horizontal edge
+            right_coords = (row, col + 1)
+            right_node = g.node_at(right_coords)
+            if right_node and right_node in node.neighbours:
+                cost = node.neighbours[right_node]
+                color = (
+                    "\033[92m" if cost == 1.0 else
+                    "\033[93m" if cost == 1.5 else
+                    "\033[91m" if cost == 5.0 else
+                    "\033[0m"
+                )
+                if coords in path_set and right_coords in path_set:
+                    node_line += "\033[96m----\033[0m"
+                else:
+                    node_line += f"{color}----\033[0m"
+            else:
+                node_line += "    "  # spacing for missing edge
 
+            # Vertical edge
+            down_coords = (row + 1, col)
+            down_node = g.node_at(down_coords)
+            if down_node and down_node in node.neighbours:
+                cost = node.neighbours[down_node]
+                color = (
+                    "\033[92m" if cost == 1.0 else
+                    "\033[93m" if cost == 1.5 else
+                    "\033[91m" if cost == 5.0 else
+                    "\033[0m"
+                )
+                if coords in path_set and down_coords in path_set:
+                    edge_line += "\033[96m|    \033[0m"
+                else:
+                    edge_line += f"{color}|    \033[0m"
+            else:
+                edge_line += "     "  # spacing for missing edge
+
+        print(node_line)
+        if row + 1 < g._height:
+            print(edge_line)
 if __name__ == '__main__':
-    gr = create_grid_graph(30, 10, terrain_cost)
-    print_grid_graph(gr, terrain_cost)
+    gr = create_grid_graph(10, 10, terrain_cost)
+        
+    gr.disconnect_node((5,5))
+    gr.remove_edge((0,0),(1,0))
+    print_grid_graph(gr, [(9,9),(8,9),(7,9)])
 
