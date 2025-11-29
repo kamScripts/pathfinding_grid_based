@@ -1,5 +1,3 @@
-"""
-First Structure to form grid-map, deprecated after implementing a Graph ADT."""
 import random
 
 class Grid:
@@ -71,7 +69,7 @@ class Grid:
             self.data[(r, c)] = {
                 'terrain': terrain,
                 'cost': self.TERRAIN_COST[terrain],
-                'occupied': self.data[(r, c)]['occupied']
+                'occupied': sel]f.data[(r, c)]['occupied']
             }
             used.add((r, c))
     def move(self, coords:tuple[int,int], obj='X')->None:

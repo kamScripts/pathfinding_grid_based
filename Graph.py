@@ -1,3 +1,5 @@
+import random
+from typing import Callable
 class Graph:
     """Implementation of weighted, undirected Graph with private
     _Node and _Edge classes"""
@@ -112,29 +114,42 @@ class Graph:
         """Quick check if two nodes have an edge."""
         return self.get_weight(src, dst) is not None
 
-def create_grid_graph(width, height, terrain_cost_func):
+def create_grid_graph(
+    width: int,
+    height: int,
+    terrain_cost_func: Callable[[int, int, int, int], float],
+    seed: int | str | None = None,
+    wall_probability: float = 0.10   # 10% chance to remove edge
+) -> Graph:
     """
-    Creates a 4-connected grid graph with proper undirected edges (no duplicates).
+    Creates a 4-connected grid graph with:
+      - Natural terrain costs
+      - ~10% of edges randomly removed (walls, cliffs, rivers, etc.)
+      - Fully deterministic with seed
     """
+    rnd = random.Random(seed)
+
     g = Graph(width, height)
 
-    # Add all nodes
+    # Add all nodes first
     for row in range(height):
         for col in range(width):
             g.add_node((row, col))
 
-    # Add horizontal and vertical edges
+    # Add edges with 10% chance of being blocked
     for row in range(height):
         for col in range(width):
-            # Right neighbour
+            # Right edge
             if col + 1 < width:
-                cost = terrain_cost_func(row, col, row, col + 1)
-                g.add_edge((row, col), (row, col + 1), cost)
+                if rnd.random() >= wall_probability:  # 90% chance to keep
+                    cost = terrain_cost_func(row, col, row, col + 1)
+                    g.add_edge((row, col), (row, col + 1), cost)
 
-            # Down neighbour
+            # Down edge
             if row + 1 < height:
-                cost = terrain_cost_func(row, col, row + 1, col)
-                g.add_edge((row, col), (row + 1, col), cost)
+                if rnd.random() >= wall_probability:  # 90% chance to keep
+                    cost = terrain_cost_func(row, col, row + 1, col)
+                    g.add_edge((row, col), (row + 1, col), cost)
 
     return g
 
@@ -143,18 +158,26 @@ def terrain_cost(
     row_to: int, col_to: int
 ) -> float:
     """
-    Compute the movement cost between two adjacent grid cells.
-"""
-    if row_from == 0 and col_from <6:
-        return 1.0
-    elif (row_from + col_from) % 3 == 0:
-        return 1.0   # flat terrain
-    elif (row_from + col_from) % 3 == 1:
-        return 1.5   # moderately rough terrain
-    else:
-        return 5.0   # very rough terrain
+    Compute the movement cost between two adjacent nodes.
+    """
 
-def print_grid_graph(g: Graph, path: list[tuple[int, int]] = None):
+    total = row_from + col_from + row_to + col_to
+    if (total) % 3 == 0:
+        return 1.0
+    if (total) % 3 > 1:
+        return 1.5
+    return 3.0
+def cost_to_color(cost):
+
+    if cost == 1.0:
+        return "\033[90m"       # Dark gray -light gravel path
+    if cost == 1.5:
+        return "\033[32m"       # Green-medium forest
+    if cost == 3.0:
+        return "\033[33m"       # Yellow-rough / rocky
+    return "\033[91m"
+
+def print_grid_graph(g: Graph, path: list[tuple[int, int]] | None = None):
     """
     Print ASCII grid with colored edges and optional path overlay.
     Preserves spacing even when nodes/edges are removed.
@@ -184,12 +207,7 @@ def print_grid_graph(g: Graph, path: list[tuple[int, int]] = None):
             right_node = g.node_at(right_coords)
             if right_node and right_node in node.neighbours:
                 cost = node.neighbours[right_node]
-                color = (
-                    "\033[90m" if cost == 1.0 else
-                    "\033[32m" if cost == 1.5 else
-                    "\033[33m" if cost == 5.0 else
-                    "\033[0m"
-                )
+                color = cost_to_color(cost)
                 if coords in path_set and right_coords in path_set:
                     node_line += "\033[91m----\033[0m"
                 else:
@@ -202,12 +220,7 @@ def print_grid_graph(g: Graph, path: list[tuple[int, int]] = None):
             down_node = g.node_at(down_coords)
             if down_node and down_node in node.neighbours:
                 cost = node.neighbours[down_node]
-                color = (
-                    "\033[90m" if cost == 1.0 else
-                    "\033[32m" if cost == 1.5 else
-                    "\033[33m" if cost == 5.0 else
-                    "\033[0m"
-                )
+                color = cost_to_color(cost)
                 if coords in path_set and down_coords in path_set:
                     edge_line += "\033[91m|    \033[0m"
                 else:
