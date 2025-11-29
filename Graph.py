@@ -39,14 +39,14 @@ class Graph:
         self._nodes[coords] = node
         return node
 
-    def  add_edge(self, origin:tuple[int, int], destination:tuple[int,int], weight=1)->None:
+    def  add_edge(self, origin:tuple[int, int], destination:tuple[int,int], weight=1.0)->None:
         origin_node = self.add_node(origin)
         d_node = self.add_node(destination)
      
         origin_node.neighbours[d_node] = weight
         d_node.neighbours[origin_node] = weight
 
-    def remove_node(self, coords:tuple[int,int])->_Node:
+    def remove_node(self, coords:tuple[int,int])->None:
         """Remove and return a node at coords (x,y)."""
         node= self._nodes.get(coords)
         #Remove all references
@@ -117,7 +117,7 @@ class Graph:
 def create_grid_graph(
     width: int,
     height: int,
-    terrain_cost_func: Callable[[int, int, int, int], float],
+    terrain_cost_func: Callable,
     seed: int | str | None = None,
     wall_probability: float = 0.10   # 10% chance to remove edge
 ) -> Graph:
@@ -128,7 +128,6 @@ def create_grid_graph(
       - Fully deterministic with seed
     """
     rnd = random.Random(seed)
-
     g = Graph(width, height)
 
     # Add all nodes first
@@ -142,33 +141,24 @@ def create_grid_graph(
             # Right edge
             if col + 1 < width:
                 if rnd.random() >= wall_probability:  # 90% chance to keep
-                    cost = terrain_cost_func(row, col, row, col + 1)
+                    cost = terrain_cost_func()
                     g.add_edge((row, col), (row, col + 1), cost)
 
             # Down edge
             if row + 1 < height:
                 if rnd.random() >= wall_probability:  # 90% chance to keep
-                    cost = terrain_cost_func(row, col, row + 1, col)
+                    cost = terrain_cost_func()
                     g.add_edge((row, col), (row + 1, col), cost)
 
     return g
 
-def terrain_cost(
-    row_from: int, col_from: int,
-    row_to: int, col_to: int
-) -> float:
+def terrain_cost() -> float:
     """
     Compute the movement cost between two adjacent nodes.
     """
-
-    total = row_from + col_from + row_to + col_to
-    if (total) % 3 == 0:
-        return 1.0
-    if (total) % 3 > 1:
-        return 1.5
-    return 3.0
+    return random.choice([1,1.5,3])
 def cost_to_color(cost):
-
+    
     if cost == 1.0:
         return "\033[90m"       # Dark gray -light gravel path
     if cost == 1.5:
@@ -183,10 +173,14 @@ def print_grid_graph(g: Graph, path: list[tuple[int, int]] | None = None):
     Preserves spacing even when nodes/edges are removed.
     """
     path_set = set(path) if path else set()
-
+    header = "  |"  # space for row numbers
+    for col in range(g._width):
+        header += f"{col:2d}   "   # two-digit columns
+    print(header)
+    print("  +","-"*(len(header)-6))
     for row in range(g._height):
-        node_line = ""
-        edge_line = ""
+        node_line = f"{row:2d}| "
+        edge_line = "  | "
         for col in range(g._width):
             coords = (row, col)
             node = g.node_at(coords)
@@ -231,6 +225,7 @@ def print_grid_graph(g: Graph, path: list[tuple[int, int]] | None = None):
         print(node_line)
         if row + 1 < g._height:
             print(edge_line)
+    print("  +","-"*(len(header)-6))
 if __name__ == '__main__':
     gr = create_grid_graph(10, 10, terrain_cost)
         
