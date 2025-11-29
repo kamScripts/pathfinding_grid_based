@@ -6,74 +6,90 @@ def dijkstra(
     graph: Graph,
     start: Tuple[int, int],
     goal: Tuple[int, int]
-) -> Tuple[Optional[Dict[Tuple[int, int], float]], Dict[Tuple[int, int], Tuple[int, int]]]:
+) -> Tuple[Dict[Tuple[int, int], float], Dict[Tuple[int, int], Tuple[int, int]]]:
     """
-    Run Dijkstra's algorithm on the graph from start to goal.
+    Dijkstra's algorithm using priority queue (heapq).
+    Returns:
+        - distances: best known distance from start to each node
+        - previous: parent pointer for path reconstruction
     """
-    if not graph.node_at(start):
-        raise ValueError(f"Start node {start} does not exist in graph")
-    if not graph.node_at(goal):
-        raise ValueError(f"Goal node {goal} does not exist in graph")
 
-    # Priority queue: (distance, coords)
-    pq = [(0, start)]
-    heapify(pq) # make pq a Priority Queue.
+    if graph.node_at(start) is None:
+        raise ValueError(f"Start node {start} does not exist in the graph")
+    if graph.node_at(goal) is None:
+        raise ValueError(f"Goal node {goal} does not exist in the graph")
+
+
+    # pq - Priority queue: stores (distance, coordinates)
+    # heapq ensures we always expand the current shortest path first
+    pq: List[Tuple[float, Tuple[int, int]]] = []
+    heappush(pq, (0, start))
+
+    # distances: best known distance from start to each node
     distances: Dict[Tuple[int, int], float] = {start: 0}
+    # {} to reconstruct the final path (parent map)
     previous: Dict[Tuple[int, int], Tuple[int, int]] = {}
+    # Set to avoid visiting same nodes
+    visited: set[Tuple[int, int]] = set()
 
     while pq:
+        # Pop the node with the smallest known distance
         current_dist, current = heappop(pq)
+        # Skip if visited
+        if current in visited:
+            continue
 
+        # Mark as visited, to prevent re-visiting
+        visited.add(current)
+
+        # Goal reached with shortest path
         if current == goal:
             break
 
-        if current_dist > distances.get(current, float('inf')):
-            continue
+        # Explore all neighbors
+        for neighbor_coords, weight in graph.neighbours(current):
+            neighbor = neighbor_coords
 
-        node = graph.node_at(current)
-        for neighbor_node, weight in node.neighbours.items():
-            neighbor_coords = neighbor_node.get_coords()
+            # Skip already visited nodes
+            if neighbor in visited:
+                continue
+
+            # Relaxation step:
             new_dist = current_dist + weight
 
-            if new_dist < distances.get(neighbor_coords, float('inf')):
-                distances[neighbor_coords] = new_dist
-                previous[neighbor_coords] = current
-                heappush(pq, (new_dist, neighbor_coords))
-        
+            if new_dist < distances.get(neighbor, float('inf')):
+                # Update best known distance and parent
+                distances[neighbor] = new_dist
+                previous[neighbor] = current
+
+                # Push the newly discovered path into priority queue
+                heappush(pq, (new_dist, neighbor))
 
     return distances, previous
-def shortest_path(graph: Graph, start: tuple, goal: tuple)->tuple[List,float]:
+def shortest_path(
+    graph: Graph,
+    start: tuple[int,int],
+    goal: tuple[int,int]
+) -> tuple[List[tuple[int,int]], float] | tuple[None, None]:
     """
     Returns (path, cost) or (None, None) if no path exists.
     """
     distances, previous = dijkstra(graph, start, goal)
-    
-    if goal not in distances:
-        return None, None  # unreachable
-    
-    path = reconstruct_path(previous, start, goal)
-    cost = distances[goal]
-    
-    return path, cost
 
-def reconstruct_path(
-    previous: Dict[Tuple[int, int], Tuple[int, int]],
-    start: Tuple[int, int],
-    goal: Tuple[int, int]
-) -> List[Tuple[int, int]]:
-    """
-    Reconstruct the shortest path from start to goal using the previous dictionary.
-    """
-    path = []
+    if goal not in distances:
+        return None, None
+
+    path: List[tuple[int,int]] = [goal]
     current = goal
-    while current is not None:
+    while current in previous:
+        current = previous[current]
         path.append(current)
-        if current == start:
-            break
-        current = previous.get(current)
-    else:
-        return []  # start not reached
-    return path[::-1]
+
+    cost = distances[goal]
+
+    return path[::-1], cost
+
+
 def dfs(graph, start_coords: tuple[int, int], visited: dict[tuple[int, int], tuple[int, int]]):
     """
     Depth-First Search on your Graph implementation.

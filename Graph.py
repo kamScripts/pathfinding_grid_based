@@ -12,12 +12,6 @@ class Graph:
         def get_coords(self):
             """Return value attached to the node."""
             return self._coords
-        # _coords in dunder methods is accessed directly to avoid overhead call to a getter
-        def __hash__(self):
-            """This method allows Node's coordinates (x,y) be a map or set key"""
-            return hash(self._coords)
-        def __eq__(self, other):
-            return isinstance(other, Graph._Node) and self._coords == other._coords
         def __repr__(self):
             return f"Node{self._coords}"
 #-------------------- Graph Constructor----------------------------
@@ -26,13 +20,15 @@ class Graph:
         self._nodes = {}
         self._width = width
         self._height = height
+
     def node_at(self,coords):
         """Return a node at coordinates (x,y)."""
         return self._nodes.get(coords)
+
     def node_coords(self, node:_Node):
         """Return coordinates of a Node."""
         return node.get_coords()
-#-------------------- CREATE AND DElATE OPERATIONS------------------
+
     def add_node(self,coords:tuple[int,int])->_Node:
         """Create and return Node"""
         if coords in self._nodes:   #if node exists get it from _nodes
@@ -40,12 +36,14 @@ class Graph:
         node = self._Node(coords)
         self._nodes[coords] = node
         return node
+
     def  add_edge(self, origin:tuple[int, int], destination:tuple[int,int], weight=1)->None:
         origin_node = self.add_node(origin)
         d_node = self.add_node(destination)
-        
+     
         origin_node.neighbours[d_node] = weight
         d_node.neighbours[origin_node] = weight
+
     def remove_node(self, coords:tuple[int,int])->_Node:
         """Remove and return a node at coords (x,y)."""
         node= self._nodes.get(coords)
@@ -54,18 +52,18 @@ class Graph:
             del neighbour.neighbours[node]
         #Remove a node from a Graph.
         del self._nodes[coords]
-        return node 
+
     def remove_edge(self, origin:tuple[int, int], destination:tuple[int, int])->None:
         """Remove edge between two nodes"""
         origin_node = self.node_at(origin)
         d_node = self.node_at(destination)
-        
         if not origin_node or not d_node:
             raise ValueError('Node not found')
         if d_node in origin_node.neighbours:
             del origin_node.neighbours[d_node]
         if origin_node in d_node.neighbours:
             del d_node.neighbours[origin_node]
+
     def disconnect_node(self, coords: tuple[int, int]) -> None:
         """
         Disconnect a node from the graph by removing all its edges.
@@ -75,18 +73,22 @@ class Graph:
         node = self.node_at(coords)
         if not node:
             raise ValueError(f"Node at {coords} not found")
-    
+
         # Remove references from all neighbours
         for neighbour in list(node.neighbours.keys()):
             del neighbour.neighbours[node]
-    
+
         # Clear this node's neighbour list
         node.neighbours.clear()
-    def neighbours(self, coords):
-        """Return an iteration of all valid endpoints and weights"""
+
+    def neighbours(self, coords: tuple[int, int]):
+        """Yield (neighbor_coords, weight)"""
         node = self.node_at(coords)
-        if node:
-            yield from node.neighbours.items()
+        if node is None:
+            return
+        for neighbor_node, weight in node.neighbours.items():
+            yield neighbor_node.get_coords(), weight
+
     def get_weight(self, origin, destination):
         origin_node = self.node_at(origin)
         d_node = self.node_at(destination)
@@ -95,13 +97,20 @@ class Graph:
             return origin_node.neighbours[d_node]
         return None
     def in_bounds(self, coords):
-        return 0<=coords[0]<self._width and 0<coords[1]<self._height
+        """Check if coordinates are within graph bounds."""
+        if not (isinstance(coords, tuple) and len(coords) == 2):
+            return False
+        x, y = coords
+        return 0 <= x < self._width and 0 <= y < self._height
     def node_count(self):
         return len(self._nodes)
+
     def nodes(self):
         return iter(self._nodes.values())
-    def clear(self):
-        self._nodes.clear()
+
+    def is_connected(self, src, dst):
+        """Quick check if two nodes have an edge."""
+        return self.get_weight(src, dst) is not None
 
 def create_grid_graph(width, height, terrain_cost_func):
     """
