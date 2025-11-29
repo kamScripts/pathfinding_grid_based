@@ -32,7 +32,7 @@ class Graph:
     def node_coords(self, node:_Node):
         """Return coordinates of a Node."""
         return node.get_coords()
-#-------------------- CREATE AND DE----------------------------
+#-------------------- CREATE AND DElATE OPERATIONS------------------
     def add_node(self,coords:tuple[int,int])->_Node:
         """Create and return Node"""
         if coords in self._nodes:   #if node exists get it from _nodes
@@ -71,10 +71,6 @@ class Graph:
         Disconnect a node from the graph by removing all its edges.
         The node remains in the graph but becomes isolated.
     
-        Parameters
-        ----------
-        coords : tuple[int, int]
-            Coordinates of the node to disconnect.
         """
         node = self.node_at(coords)
         if not node:
