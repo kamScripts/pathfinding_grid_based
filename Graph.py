@@ -22,7 +22,7 @@ class Graph:
         self._height = height
 
     def node_at(self,coords):
-        """Return a node at coordinates (x,y)."""
+        """Return a node at coordinates (row,column)."""
         return self._nodes.get(coords)
 
     def node_coords(self, node:_Node):
@@ -175,7 +175,7 @@ def print_grid_graph(g: Graph, path: list[tuple[int, int]] = None):
                 continue
 
             if coords in path_set:
-                node_line += "\033[91m●\033[0m"
+                node_line += "\033[91m●\033[0m" # node symbol
             else:
                 node_line += "\u25CB"
 

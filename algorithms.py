@@ -1,3 +1,4 @@
+from collections import deque
 from heapq import heapify, heappop, heappush
 from typing import Dict, Tuple, Optional, List
 from Graph import Graph
@@ -88,7 +89,44 @@ def shortest_path(
     cost = distances[goal]
 
     return path[::-1], cost
+def bfs(
+    graph: Graph,
+    start: tuple[int, int]
+) -> Dict[tuple[int, int], tuple[int, int] | None]:
+    """
+    Breadth-First-Search.
+    Returns: previous dict where previous[node] = parent
+    """
 
+    previous: Dict[tuple[int, int], tuple[int, int] | None] = {}
+    visited: Dict[tuple[int, int], bool] = {}
+    queue = deque([start])
+
+    visited[start] = True
+    previous[start] = None  # start has no parent
+
+    while queue:
+        current = queue.popleft()
+
+        for neighbor, _ in graph.neighbours(current):  # ignore weight
+            if neighbor not in visited:
+                visited[neighbor] = True
+                previous[neighbor] = current
+                queue.append(neighbor)
+
+    return previous
+
+def bfs_shortest_path(graph: Graph, start, goal):
+    previous = bfs(graph, start)
+    if goal not in previous:
+        return None
+
+    path = []
+    current = goal
+    while current is not None:
+        path.append(current)
+        current = previous[current]
+    return path[::-1]
 
 def dfs(graph, start_coords: tuple[int, int], visited: dict[tuple[int, int], tuple[int, int]]):
     """
