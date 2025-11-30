@@ -71,7 +71,7 @@ def shortest_path(
     graph: Graph,
     start: tuple[int,int],
     goal: tuple[int,int]
-) -> tuple[List[tuple[int,int]], float] | tuple[None, None]:
+) -> tuple[list[tuple[tuple[int, int], float]], float] | tuple[None, None]:
     """
     Returns (path, cost) or (None, None) if no path exists.
     """
@@ -80,11 +80,12 @@ def shortest_path(
     if goal not in distances:
         return None, None
 
-    path: List[tuple[int,int]] = [goal]
+    path = [(goal,distances[goal])]
     current = goal
+    
     while current in previous:
         current = previous[current]
-        path.append(current)
+        path.append((current,distances[current]))
 
     cost = distances[goal]
 
