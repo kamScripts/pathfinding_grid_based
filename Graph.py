@@ -119,11 +119,11 @@ def create_grid_graph(
 def cost_to_color(cost):
 
     if cost == 1.0:
-        return "\033[90m"       # Dark gray -light gravel path
+        return "\033[38;5;41m"       # Dark gray -light gravel path
     if cost == 1.5:
-        return "\033[32m"       # Green-medium forest
+        return "\033[38;5;75m"       # Green-medium forest
     if cost == 3.0:
-        return "\033[33m"       # Yellow-rough / rocky
+        return "\033[38;5;126m"       # Yellow-rough / rocky
     return "\033[91m"
 
 def print_grid_graph(g, path: list[tuple[int, int]] | None = None):
@@ -201,9 +201,9 @@ def print_grid_graph(g, path: list[tuple[int, int]] | None = None):
 
     #Legend
     print("\nLegend:")
-    print(f"  \033[90m{H_LIGHT*3}\033[0m 1.0 → Open terrain")
-    print(f"  \033[32m{H_LIGHT*3}\033[0m 1.5 → Forest / hills")
-    print(f"  \033[33m{H_LIGHT*3}\033[0m 3.0 → Mountain / rough")
+    print(f"  \033[38;5;41m{H_LIGHT*3}\033[0m 1.0 → Open terrain")
+    print(f"  \033[38;5;75m{H_LIGHT*3}\033[0m 1.5 → Forest / hills")
+    print(f"  \033[38;5;126m{H_LIGHT*3}\033[0m 3.0 → Mountain / rough")
     print(f"  \033[91m{NODE_PATH} {H_HEAVY*3} {V_HEAVY}\033[0m → Path (highlighted in red)")
 if __name__ == '__main__':
     gr = create_grid_graph(10, 10)
