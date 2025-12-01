@@ -23,7 +23,7 @@ class Graph:
         # weight[x][y][0] = right edge cost
         # weight[x][y][1] = down edge cost
         self.weight: List[List[List[float]]] = [
-            [[0.0, 0.0] for _ in range(width)] for _ in range(height)
+            [[0, 0] for _ in range(width)] for _ in range(height)
         ]
 
         # Mark all nodes as present initially
@@ -36,9 +36,6 @@ class Graph:
         def __init__(self, coords: Tuple[int, int]):
             self.coords = coords
 
-        def get_coords(self) -> Tuple[int, int]:
-            return self.coords
-
         def __repr__(self):
             return f"Node{self.coords}"
 
@@ -47,10 +44,6 @@ class Graph:
         if 0 <= x < self.width and 0 <= y < self.height:
             return self.nodes[y][x]
         return None
-
-    def in_bounds(self, coords: Tuple[int, int]) -> bool:
-        x, y = coords
-        return 0 <= x < self.width and 0 <= y < self.height
 
     def neighbours(self, coords: Tuple[int, int]):
         """Yield ALL 4-directional neighbors if edge exists."""
@@ -99,7 +92,7 @@ def create_grid_graph(
     Create a Graph
     """
     rnd = random.Random(seed)
-    costs = [1.0, 1.5, 3.0]
+    costs = [1, 2, 3]
     g = Graph(width, height)
 
     for y in range(height):
@@ -118,12 +111,12 @@ def create_grid_graph(
 
 def cost_to_color(cost):
 
-    if cost == 1.0:
+    if cost == 1:
         return "\033[38;5;41m"       # Dark gray -light gravel path
-    if cost == 1.5:
-        return "\033[38;5;75m"       # Green-medium forest
-    if cost == 3.0:
-        return "\033[38;5;126m"       # Yellow-rough / rocky
+    if cost == 2:
+        return "\033[38;5;63m"       # Green-medium forest
+    if cost == 3:
+        return "\033[38;5;198m"       # Yellow-rough / rocky
     return "\033[91m"
 
 def print_grid_graph(g, path: list[tuple[int, int]] | None = None):
@@ -155,7 +148,7 @@ def print_grid_graph(g, path: list[tuple[int, int]] | None = None):
     print(header)
     print()
 
-    #Grid rows
+    #Grid rows labels
     for row in range(height):
         node_line = f"{row:02d}  "
         edge_line = "    "
@@ -201,13 +194,12 @@ def print_grid_graph(g, path: list[tuple[int, int]] | None = None):
 
     #Legend
     print("\nLegend:")
-    print(f"  \033[38;5;41m{H_LIGHT*3}\033[0m 1.0 → Open terrain")
-    print(f"  \033[38;5;75m{H_LIGHT*3}\033[0m 1.5 → Forest / hills")
-    print(f"  \033[38;5;126m{H_LIGHT*3}\033[0m 3.0 → Mountain / rough")
-    print(f"  \033[91m{NODE_PATH} {H_HEAVY*3} {V_HEAVY}\033[0m → Path (highlighted in red)")
+    print(f"  \033[38;5;41m{H_LIGHT*3} 1.0 ->\033[0m  Open terrain")
+    print(f"  \033[38;5;63m{H_LIGHT*3} 1.5 ->\033[0m  Forest / hills")
+    print(f"  \033[38;5;198m{H_LIGHT*3} 3.0 ->\033[0m Mountain / rough ")
+    print(f"  \033[91m{NODE_PATH} {H_HEAVY*3} {V_HEAVY} ->\033[0m Path (highlighted in red) ")
+    
 if __name__ == '__main__':
     gr = create_grid_graph(10, 10)
-        
-
     print_grid_graph(gr, [(9,9),(8,9),(7,9)])
 
