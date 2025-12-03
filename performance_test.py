@@ -2,7 +2,7 @@ import cProfile
 import time
 import tracemalloc
 
-# Import both generators
+
 from Grid_old import terrain_cost, create_grid_graph as create_heavy_graph
 from Graph import create_grid_graph as create_light_graph
 

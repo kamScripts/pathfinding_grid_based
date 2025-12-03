@@ -12,8 +12,8 @@ class Graph:
         self.height = height
         
         # Edge weights: weight[y][x][0=right, 1=down]
-        self.weight: List[List[List[float]]] = [
-            [[0.0, 0.0] for _ in range(width)]
+        self.weight: List[List[List[int]]] = [
+            [[0, 0] for _ in range(width)]
             for _ in range(height)
         ]
 
@@ -21,7 +21,7 @@ class Graph:
         x, y = coords
         return 0 <= x < self.width and 0 <= y < self.height
 
-    def neighbours(self, coords: Tuple[int, int]) -> Generator[Tuple[Tuple[int, int], float], None, None]:
+    def neighbours(self, coords: Tuple[int, int]) -> Generator[Tuple[Tuple[int, int], int], None, None]:
         x, y = coords
         
         # Right
@@ -94,7 +94,7 @@ def print_grid_graph(g, path: list[tuple[int, int]] | None = None):
     V_HEAVY = "\u2503"   # ┃ bold vertical (path)
 
     NODE_EMPTY = "\u25CB"   # ○ open circle
-    NODE_PATH  = "\u25CF"   # ● filled circle )
+    NODE_PATH  = "\u25CF"   # ● filled circle 
 
     #Column headers
     header = "  "
@@ -149,9 +149,9 @@ def print_grid_graph(g, path: list[tuple[int, int]] | None = None):
 
     #Legend
     print("\nLegend:")
-    print(f"  \033[38;5;41m{H_LIGHT*3} 1.0 ->\033[0m  Open terrain")
-    print(f"  \033[38;5;63m{H_LIGHT*3} 1.5 ->\033[0m  Forest / hills")
-    print(f"  \033[38;5;198m{H_LIGHT*3} 3.0 ->\033[0m Mountain / rough ")
+    print(f"  \033[38;5;41m{H_LIGHT*3} 1 ->\033[0m  Open terrain")
+    print(f"  \033[38;5;63m{H_LIGHT*3} 2 ->\033[0m  Forest / hills")
+    print(f"  \033[38;5;198m{H_LIGHT*3} 3 ->\033[0m Mountain / rough ")
     print(f"  \033[91m{NODE_PATH} {H_HEAVY*3} {V_HEAVY} ->\033[0m Path (highlighted in red) ")
     
 if __name__ == '__main__':

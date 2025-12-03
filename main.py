@@ -2,11 +2,11 @@ import cProfile
 from Graph import create_grid_graph, print_grid_graph
 from algorithms import shortest_path, a_star, reconstruct_path
 
-g = create_grid_graph(40,50,seed=36991)
+g = create_grid_graph(60,10,seed=36991)
 
 
 u = (0,0)
-v = (39,39)
+v = (59,9)
 path_2,cost2=shortest_path(g,u,v)
 previous, g_score = a_star(g,u,v)
 path = reconstruct_path(g_score, previous,u,v)
