@@ -15,10 +15,10 @@ def dijkstra(
         - previous: parent pointer for path reconstruction
     """
 
-    if graph.node_at(start) is None:
-        raise ValueError(f"Start node {start} does not exist in the graph")
-    if graph.node_at(goal) is None:
-        raise ValueError(f"Goal node {goal} does not exist in the graph")
+    if not graph.node_at(start):
+        raise ValueError(f"Start {start} out of bounds")
+    if not graph.node_at(goal):
+        raise ValueError(f"Goal {goal} out of bounds")
 
 
     # pq - Priority queue: stores (distance, coordinates)
@@ -99,7 +99,10 @@ def a_star(
     """
     A* search with a priority queue
     """
-
+    if not graph.node_at(start):
+        raise ValueError(f"Start {start} out of bounds")
+    if not graph.node_at(goal):
+        raise ValueError(f"Goal {goal} out of bounds")
     def heuristic(node: Tuple[int, int]) -> float:
         dx = abs(node[0] - goal[0])
         dy = abs(node[1] - goal[1])

@@ -1,111 +1,66 @@
 import random
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Generator
 class Graph:
     """
     Ultra-fast 4-connected grid graph using 2D arrays.
-    Designed for massive maps: 1000×1000, 5000×5000, 10000×10000+
-    Memory: ~4× less than dict version
-    Speed:   ~10–30× faster creation & access
+
     """
     # Directions: right and down only (to avoid duplicate edges)
-    DIRECTIONS = [(1, 0), (0, 1)]
 
     def __init__(self, width: int, height: int):
         self.width = width
         self.height = height
-
-        # 2D array of node objects (None = missing node)
-        self.nodes: List[List[Optional['_Node']]] = [
-            [None] * width for _ in range(height)
-        ]
-
-        # 2D arrays for edge weights (float)
-        # weight[x][y][0] = right edge cost
-        # weight[x][y][1] = down edge cost
+        
+        # Edge weights: weight[y][x][0=right, 1=down]
         self.weight: List[List[List[float]]] = [
-            [[0, 0] for _ in range(width)] for _ in range(height)
+            [[0.0, 0.0] for _ in range(width)]
+            for _ in range(height)
         ]
 
-        # Mark all nodes as present initially
-        for y in range(height):
-            for x in range(width):
-                self.nodes[y][x] = self._Node((x, y))
-
-    class _Node:
-        __slots__ = ('coords',)
-        def __init__(self, coords: Tuple[int, int]):
-            self.coords = coords
-
-        def __repr__(self):
-            return f"Node{self.coords}"
-
-    def node_at(self, coords: Tuple[int, int]) -> Optional['_Node']:
+    def node_at(self, coords: Tuple[int, int]) -> bool:
         x, y = coords
-        if 0 <= x < self.width and 0 <= y < self.height:
-            return self.nodes[y][x]
-        return None
+        return 0 <= x < self.width and 0 <= y < self.height
 
-    def neighbours(self, coords: Tuple[int, int]):
-        """Yield ALL 4-directional neighbors if edge exists."""
+    def neighbours(self, coords: Tuple[int, int]) -> Generator[Tuple[Tuple[int, int], float], None, None]:
         x, y = coords
-
+        
         # Right
         if x + 1 < self.width and self.weight[y][x][0] > 0:
             yield (x + 1, y), self.weight[y][x][0]
-
-        # Left - check the cell to the left's right-edge
+            
+        # Left
         if x > 0 and self.weight[y][x-1][0] > 0:
             yield (x - 1, y), self.weight[y][x-1][0]
-
+            
         # Down
         if y + 1 < self.height and self.weight[y][x][1] > 0:
             yield (x, y + 1), self.weight[y][x][1]
-
-        # Up - check the cell above down-edge
+            
+        # Up
         if y > 0 and self.weight[y-1][x][1] > 0:
             yield (x, y - 1), self.weight[y-1][x][1]
 
-    def get_weight(self, a: Tuple[int, int], b: Tuple[int, int]) -> Optional[float]:
-        ax, ay = a
-        bx, by = b
-        dx, dy = bx - ax, by - ay
-        if abs(dx) + abs(dy) != 1:
-            return None
-        if dx == 1:  # b is right of a
-            return self.weight[ay][ax][0] if self.weight[ay][ax][0] > 0 else None
-        if dx == -1:  # b is left of a
-            return self.weight[by][bx][0] if self.weight[by][bx][0] > 0 else None
-        if dy == 1:  # b below a
-            return self.weight[ay][ax][1] if self.weight[ay][ax][1] > 0 else None
-        if dy == -1:  # b above a
-            return self.weight[by][bx][1] if self.weight[by][bx][1] > 0 else None
-        return None
 
 def create_grid_graph(
-    width: int,
-    height: int,
+    width: int, height: int,
     seed: int | str = 42,
-    wall_probability: float = 0.10,
-    cost_weights: tuple[float, float, float] = (0.6, 0.3, 0.1)
+    wall_probability: float = 0.10
 ) -> Graph:
-    """
-    Create a Graph
-    """
     rnd = random.Random(seed)
-    costs = [1, 2, 3]
+    choice = rnd.choice
+    rand = rnd.random
+    COSTS = (1, 2, 3)
+
     g = Graph(width, height)
 
     for y in range(height):
+        row = g.weight[y]
         for x in range(width):
-            # Right edge
-            if x + 1 < width and rnd.random() >= wall_probability:
-                cost = rnd.choices(costs, weights=cost_weights, k=1)[0]
-                g.weight[y][x][0] = cost
-
-            # Down edge
-            if y + 1 < height and rnd.random() >= wall_probability:
-                cost = rnd.choices(costs, weights=cost_weights, k=1)[0]
-                g.weight[y][x][1] = cost
+            cell = row[x]
+            if x + 1 < width and rand() >= wall_probability:
+                cell[0] = choice(COSTS)
+            if y + 1 < height and rand() >= wall_probability:
+                cell[1] = choice(COSTS)
 
     return g
 
