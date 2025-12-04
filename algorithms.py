@@ -10,9 +10,9 @@ def dijkstra(
 ) -> Tuple[Dict[Tuple[int, int], float], Dict[Tuple[int, int], Tuple[int, int]]]:
     """
     Dijkstra's algorithm using priority queue (heapq).
-    Returns:
-        - distances: best known distance from start to each node
-        - previous: parent pointer for path reconstruction
+    Returns
+        distances: best known distance from start to each node
+        previous: parent pointer for path reconstruction
     """
 
     if not graph.node_at(start):
@@ -40,7 +40,7 @@ def dijkstra(
         # Skip if visited
         if current in visited:
             continue
-        # Mark as visited, to prevent re-visiting
+        # Mark as visited, to prevent revisiting
         visited.add(current)
 
         # Goal reached with shortest path
@@ -68,79 +68,41 @@ def dijkstra(
 
     return distances, previous
 
-def a_star(
-    graph,
-    start: Tuple[int, int],
-    goal: Tuple[int, int]
-) -> Tuple[Dict[Tuple[int, int], Tuple[int, int]], Dict[Tuple[int, int], float]]:
-    """
-    A* search with a priority queue
-    """
-    if not graph.node_at(start):
-        raise ValueError(f"Start {start} out of bounds")
-    if not graph.node_at(goal):
-        raise ValueError(f"Goal {goal} out of bounds")
-    #def heuristic(node: Tuple[int, int]) -> float:
-    #    dx = abs(node[0] - goal[0])
-    #    dy = abs(node[1] - goal[1])
-    #    manhattan = dx + dy
-#
-    #    # tie-breaking
-    #    dx1 = node[0] - goal[0]
-    #    dy1 = node[1] - goal[1]
-    #    dx2 = start[0] - goal[0]
-    #    dy2 = start[1] - goal[1]
-    #    cross = abs(dx1*dy2 - dx2*dy1)
-    #    return manhattan + cross * 0.001
-    def heuristic(node: Tuple[int, int]) -> float:
+def a_star(graph, start, goal):
+    def heuristic(node):
         return abs(node[0] - goal[0]) + abs(node[1] - goal[1])
 
-    # Heap: (f_score, counter, node) - counter prevents comparison errors
-    open_heap: List[Tuple[float, int, Tuple[int, int]]] = []
+    open_heap = []
     counter = 0
     heappush(open_heap, (heuristic(start), counter, start))
     counter += 1
 
-    open_set: Set[Tuple[int, int]] = {start}
-    closed_set: Set[Tuple[int, int]] = set()
-
-    g_score: Dict[Tuple[int,int], float] = {start: 0.0}
-    previous: Dict[Tuple[int, int], Tuple[int, int]] = {}
+    open_set = {start}
+    g_score = {start: 0.0}
+    previous = {}
 
     while open_heap:
-        _, _, current = heappop(open_heap) # f_score, count, current.
-
-        if current not in open_set: # prevent KeyError
+        _, _, current = heappop(open_heap)
+        if current in open_set:
+            open_set.remove(current)
+        else:
             continue
-
-        open_set.remove(current)
 
         if current == goal:
             return previous, g_score
 
-        closed_set.add(current)
-
-        for neighbour, move_cost in graph.neighbours(current):
-            tentative_g = g_score[current] + move_cost
-
-            if neighbour in open_set and tentative_g < g_score.get(neighbour, float('inf')):
-                open_set.remove(neighbour)
-            if neighbour in closed_set and tentative_g < g_score.get(neighbour, float('inf')):
-                closed_set.remove(neighbour)
-
-            if neighbour in closed_set:
-                continue
+        for neighbour, cost in graph.neighbours(current):
+            tentative_g = g_score[current] + cost
 
             if tentative_g < g_score.get(neighbour, float('inf')):
                 previous[neighbour] = current
                 g_score[neighbour] = tentative_g
-                f_new = tentative_g + heuristic(neighbour)
+                f_score = tentative_g + heuristic(neighbour)
 
-                if neighbour not in open_set and neighbour not in closed_set:
-                    heappush(open_heap, (f_new, counter, neighbour))
+                if neighbour not in open_set:
+                    heappush(open_heap, (f_score, counter, neighbour))
                     open_set.add(neighbour)
                     counter += 1
-
     return previous, g_score
 
 def shortest_path(
@@ -176,7 +138,7 @@ def bfs(
 ) -> Dict[tuple[int, int], tuple[int, int] | None]:
     """
     Breadth-First-Search.
-    Returns: previous dict where previous[node] = parent
+    Returns previous dict where previous[node] = parent
     """
 
     previous: Dict[tuple[int, int], tuple[int, int] | None] = {}
@@ -189,7 +151,7 @@ def bfs(
     while queue:
         current = queue.popleft()
 
-        for neighbour, _ in graph.neighbours(current):  # ignore weight
+        for neighbour, _ in graph.neighbours(current):
             if neighbour not in visited:
                 visited[neighbour] = True
                 previous[neighbour] = current

@@ -1,5 +1,6 @@
 import random
 from typing import List, Tuple, Generator
+# TODO: REPLACE  2D ADJACENCY LIST WITH 1D LIST
 class Graph:
     """
     Ultra-fast 4-connected grid graph using 2D arrays.
@@ -157,5 +158,3 @@ if __name__ == '__main__':
     print_grid_graph(gr)
     for n in gr.neighbours((9,4)):
         print(n)
-
-

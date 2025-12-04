@@ -7,10 +7,13 @@ from algorithms import shortest_path
 
 
 SIZES = [10, 50, 100, 200, 500, 1000]  # Graph size
-TRIALS = 10       # Number of benchmarks
+TRIALS = 20       # Number of benchmarks
 SEED = 42         # Graph layout
 WALL_PROB = 0.10  # Wall removal probability
-ALGOS = ("dijkstra", "astar")
+ALGOS = (
+    "dijkstra",
+    "astar",
+    )
 
 def get_test_cases(width: int, height: int):
     """horizontal and diagonal start and goal vertices"""
@@ -38,22 +41,20 @@ def benchmark_running_times():
 
     for size in SIZES:
         width = height = size
-        print(f"\nBenchmarking {width}x{height} grid...")
+        print(f"\nBenchmarking {width}x{height} grid")
 
         graph = create_grid_graph(width, height, seed=SEED, wall_probability=WALL_PROB)
         results["data"][f"{size}x{size}"] = {}
 
         for variant_name, start, goal in get_test_cases(width, height):
-            print(f"  {variant_name:12} | Start {start} → Goal {goal}")
+            print(f"  {variant_name:12} | Start {start} -> Goal {goal}")
 
             times = {algo:[] for algo in ALGOS}
 
             for algo in ALGOS:
                 for _ in range(TRIALS):
-                    gc.collect()  # Clean state between runs
-
                     t0 = time.perf_counter()
-                    shortest_path(graph, start, goal, algorithm=algo)
+                    
                     elapsed = time.perf_counter() - t0
 
                     times[algo].append(elapsed)
@@ -67,7 +68,7 @@ def benchmark_running_times():
         gc.collect()
 
     # Save to JSON
-    with open("running_times2.json", "w", encoding="utf-8") as f:
+    with open("dijkstra_astar.json", "w", encoding="utf-8") as f:
         json.dump(results, f, indent=4)
 
     print("\n" + "=" * 80)

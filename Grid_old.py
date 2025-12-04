@@ -183,7 +183,7 @@ def print_grid_graph(g: Graph, path: list[tuple[int, int]] | None = None):
 
             # Node symbol (or placeholder if removed)
             if not node:
-                node_line += "   "  # keep spacing
+                node_line += "   "
                 edge_line += "     "
                 continue
 
