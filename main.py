@@ -1,15 +1,22 @@
 import cProfile
 from Graph import create_grid_graph, print_grid_graph
-from algorithms import shortest_path, a_star, reconstruct_path
+from algorithms import shortest_path
 
-g = create_grid_graph(60,10,seed=36991)
+g = create_grid_graph(20,20,seed=36991)
 
 
 u = (0,0)
-v = (59,9)
-path_2,cost2=shortest_path(g,u,v)
-previous, g_score = a_star(g,u,v)
-path = reconstruct_path(g_score, previous,u,v)
-print_grid_graph(g,path)
-print('A* -> ',g_score[v],' Dijkstra -> ',cost2)
-#print_grid_graph(g,path_2)
+v = (1,15)
+path_d,cost_d=shortest_path(g,u,v,'dijkstra')
+path_A, cost_A=shortest_path(g,u,v,'astar')
+print_grid_graph(g)
+print_grid_graph(g,path_d)
+print('A* -> ',cost_A,' Dijkstra -> ',cost_d)
+print(path_d,path_A)
+
+#g=create_grid_graph(500,500)
+#u=(0,0)
+#v=(497,497)
+#cProfile.runctx('shortest_path(g,u,v, algorithm="astar")',
+#            globals(), locals(), sort='cumulative')
+

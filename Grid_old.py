@@ -70,7 +70,6 @@ class Graph:
         """
         Disconnect a node from the graph by removing all its edges.
         The node remains in the graph but becomes isolated.
-    
         """
         node = self.node_at(coords)
         if not node:
@@ -122,10 +121,7 @@ def create_grid_graph(
     wall_probability: float = 0.10   # 10% chance to remove edge
 ) -> Graph:
     """
-    Creates a 4-connected grid graph with:
-      - Natural terrain costs
-      - ~10% of edges randomly removed (walls, cliffs, rivers, etc.)
-      - Fully deterministic with seed
+    Creates a 4-connected grid graph
     """
     rnd = random.Random(seed)
     g = Graph(width, height)
@@ -135,7 +131,7 @@ def create_grid_graph(
         for col in range(width):
             g.add_node((row, col))
 
-    # Add edges with 10% chance of being blocked
+    # Add edges
     for row in range(height):
         for col in range(width):
             # Right edge
@@ -146,7 +142,7 @@ def create_grid_graph(
 
             # Down edge
             if row + 1 < height:
-                if rnd.random() >= wall_probability:  # 90% chance to keep
+                if rnd.random() >= wall_probability:
                     cost = terrain_cost_func()
                     g.add_edge((row, col), (row + 1, col), cost)
 
@@ -169,7 +165,7 @@ def cost_to_color(cost):
 
 def print_grid_graph(g: Graph, path: list[tuple[int, int]] | None = None):
     """
-    Print ASCII grid with colored edges and optional path overlay.
+    Print CLI grid with colored edges and optional path overlay.
     Preserves spacing even when nodes/edges are removed.
     """
     path_set = set(path) if path else set()

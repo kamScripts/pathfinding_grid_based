@@ -10,7 +10,7 @@ class Graph:
     def __init__(self, width: int, height: int):
         self.width = width
         self.height = height
-        
+
         # Edge weights: weight[y][x][0=right, 1=down]
         self.weight: List[List[List[int]]] = [
             [[0, 0] for _ in range(width)]
@@ -31,11 +31,9 @@ class Graph:
         # Left
         if x > 0 and self.weight[y][x-1][0] > 0:
             yield (x - 1, y), self.weight[y][x-1][0]
-            
         # Down
         if y + 1 < self.height and self.weight[y][x][1] > 0:
             yield (x, y + 1), self.weight[y][x][1]
-            
         # Up
         if y > 0 and self.weight[y-1][x][1] > 0:
             yield (x, y - 1), self.weight[y-1][x][1]
@@ -74,11 +72,10 @@ def cost_to_color(cost):
         return "\033[38;5;198m"       # Yellow-rough / rocky
     return "\033[91m"
 
-def print_grid_graph(g, path: list[tuple[int, int]] | None = None):
+def print_grid_graph(g: Graph, path: list[tuple[int, int]] | None = None)->None:
     """
-    Beautiful ASCII/Unicode printer for FastGridGraph.
-    All symbols are defined as constants — no magic characters in strings!
-    Path edges & nodes in bright red.
+    CLI Graph Representation.
+    Path edges and nodes in bright red.
     """
     path_set = set(coords for coords,_ in path) if path else set()
     width  = g.width
@@ -87,23 +84,23 @@ def print_grid_graph(g, path: list[tuple[int, int]] | None = None):
     def is_path_edge(a: tuple[int,int], b:tuple[int,int]) -> bool:
         return a in path_set and b in path_set
 
-    #Unicode constants
+    # Unicode constants
     H_LIGHT = "\u2500"   # ─ thin horizontal
     H_HEAVY = "\u2501"   # ━ bold horizontal (path)
     V_LIGHT = "\u2502"   # │ thin vertical
     V_HEAVY = "\u2503"   # ┃ bold vertical (path)
 
     NODE_EMPTY = "\u25CB"   # ○ open circle
-    NODE_PATH  = "\u25CF"   # ● filled circle 
+    NODE_PATH  = "\u25CF"   # ● filled circle
 
-    #Column headers
+    # Column headers
     header = "  "
     for col in range(width):
         header += f"{col:02d}".center(4)
     print(header)
     print()
 
-    #Grid rows labels
+    # Grid rows labels
     for row in range(height):
         node_line = f"{row:02d}  "
         edge_line = "    "
@@ -111,7 +108,7 @@ def print_grid_graph(g, path: list[tuple[int, int]] | None = None):
         for col in range(width):
             coords = (col, row)  # (x, y)
 
-            if g.node_at(coords) is None:
+            if not g.node_at(coords):
                 node_line += "   "
                 edge_line += "   "
                 continue
@@ -153,8 +150,12 @@ def print_grid_graph(g, path: list[tuple[int, int]] | None = None):
     print(f"  \033[38;5;63m{H_LIGHT*3} 2 ->\033[0m  Forest / hills")
     print(f"  \033[38;5;198m{H_LIGHT*3} 3 ->\033[0m Mountain / rough ")
     print(f"  \033[91m{NODE_PATH} {H_HEAVY*3} {V_HEAVY} ->\033[0m Path (highlighted in red) ")
-    
+
 if __name__ == '__main__':
-    gr = create_grid_graph(10, 10)
-    print_grid_graph(gr, [(9,9),(8,9),(7,9)])
+    gr = create_grid_graph(10, 5)
+    print(gr.weight[1][2])
+    print_grid_graph(gr)
+    for n in gr.neighbours((9,4)):
+        print(n)
+
 

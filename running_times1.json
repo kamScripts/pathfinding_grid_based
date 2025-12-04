@@ -1,0 +1,51 @@
+{
+    "metadata": {
+        "date": "2025-12-04T12:18:36.701416",
+        "description": "Pathfinding running times (SECONDS)",
+        "seed": 42,
+        "wall_probability": 0.1,
+        "trials_per_test": 10,
+        "variants": [
+            "horizontal",
+            "diagonal"
+        ]
+    },
+    "data": {
+        "10x10": {
+            "horizontal_dijkstra": 7e-05,
+            "horizontal_astar": 9.6e-05,
+            "diagonal_dijkstra": 8.5e-05,
+            "diagonal_astar": 0.000146
+        },
+        "50x50": {
+            "horizontal_dijkstra": 0.002425,
+            "horizontal_astar": 0.001533,
+            "diagonal_dijkstra": 0.002634,
+            "diagonal_astar": 0.004633
+        },
+        "100x100": {
+            "horizontal_dijkstra": 0.010974,
+            "horizontal_astar": 0.010301,
+            "diagonal_dijkstra": 0.010858,
+            "diagonal_astar": 0.018387
+        },
+        "200x200": {
+            "horizontal_dijkstra": 0.048207,
+            "horizontal_astar": 0.037896,
+            "diagonal_dijkstra": 0.051467,
+            "diagonal_astar": 0.0872
+        },
+        "500x500": {
+            "horizontal_dijkstra": 0.40946,
+            "horizontal_astar": 0.282398,
+            "diagonal_dijkstra": 0.424085,
+            "diagonal_astar": 0.718606
+        },
+        "1000x1000": {
+            "horizontal_dijkstra": 2.129122,
+            "horizontal_astar": 1.40162,
+            "diagonal_dijkstra": 2.193086,
+            "diagonal_astar": 3.878267
+        }
+    }
+}

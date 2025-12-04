@@ -1,4 +1,4 @@
-from collections import  defaultdict, deque
+from collections import  deque
 from heapq import heappop, heappush
 from typing import Dict, Tuple, List, Set
 from Graph import Graph
@@ -22,15 +22,16 @@ def dijkstra(
 
 
     # pq - Priority queue: stores (distance, coordinates)
-    # heapq ensures we always expand the current shortest path first
+    # heapq ensures current expands shortest path first
+    # heappush - lowest val
     pq: List[Tuple[float, Tuple[int, int]]] = []
     heappush(pq, (0, start))
 
     # distances: best known distance from start to each node
     distances: Dict[Tuple[int, int], float] = {start: 0}
-    # {} to reconstruct the final path (parent map)
+    # previous: to reconstruct the final path (parent map)
     previous: Dict[Tuple[int, int], Tuple[int, int]] = {}
-    # Set to avoid visiting same nodes
+    # visited: to avoid visiting same nodes
     visited: set[Tuple[int, int]] = set()
 
     while pq:
@@ -39,7 +40,6 @@ def dijkstra(
         # Skip if visited
         if current in visited:
             continue
-
         # Mark as visited, to prevent re-visiting
         visited.add(current)
 
@@ -47,50 +47,27 @@ def dijkstra(
         if current == goal:
             break
 
-        # Explore all neighbors
-        for neighbor_coords, weight in graph.neighbours(current):
-            neighbor = neighbor_coords
+        # Explore all neighbours
+        for neighbour_coords, weight in graph.neighbours(current):
+            neighbour = neighbour_coords
 
             # Skip already visited nodes
-            if neighbor in visited:
+            if neighbour in visited:
                 continue
 
             # Relaxation step:
             new_dist = current_dist + weight
 
-            if new_dist < distances.get(neighbor, float('inf')):
+            if new_dist < distances.get(neighbour, float('inf')):
                 # Update best known distance and parent
-                distances[neighbor] = new_dist
-                previous[neighbor] = current
+                distances[neighbour] = new_dist
+                previous[neighbour] = current
 
                 # Push the newly discovered path into priority queue
-                heappush(pq, (new_dist, neighbor))
+                heappush(pq, (new_dist, neighbour))
 
     return distances, previous
 
-def shortest_path(
-    graph: Graph,
-    start: tuple[int,int],
-    goal: tuple[int,int]
-) -> tuple[list[tuple[tuple[int, int], float]], float] | tuple[None, None]:
-    """
-    Returns (path, cost) or (None, None) if no path exists.
-    """
-    distances, previous = dijkstra(graph, start, goal)
-
-    if goal not in distances:
-        return None, None
-
-    path = [(goal,distances[goal])]
-    current = goal
-    
-    while current in previous:
-        current = previous[current]
-        path.append((current,distances[current]))
-
-    cost = distances[goal]
-
-    return path[::-1], cost
 def a_star(
     graph,
     start: Tuple[int, int],
@@ -103,18 +80,20 @@ def a_star(
         raise ValueError(f"Start {start} out of bounds")
     if not graph.node_at(goal):
         raise ValueError(f"Goal {goal} out of bounds")
+    #def heuristic(node: Tuple[int, int]) -> float:
+    #    dx = abs(node[0] - goal[0])
+    #    dy = abs(node[1] - goal[1])
+    #    manhattan = dx + dy
+#
+    #    # tie-breaking
+    #    dx1 = node[0] - goal[0]
+    #    dy1 = node[1] - goal[1]
+    #    dx2 = start[0] - goal[0]
+    #    dy2 = start[1] - goal[1]
+    #    cross = abs(dx1*dy2 - dx2*dy1)
+    #    return manhattan + cross * 0.001
     def heuristic(node: Tuple[int, int]) -> float:
-        dx = abs(node[0] - goal[0])
-        dy = abs(node[1] - goal[1])
-        manhattan = dx + dy
-
-        # tie-breaking
-        dx1 = node[0] - goal[0]
-        dy1 = node[1] - goal[1]
-        dx2 = start[0] - goal[0]
-        dy2 = start[1] - goal[1]
-        cross = abs(dx1*dy2 - dx2*dy1)
-        return manhattan + cross * 0.001
+        return abs(node[0] - goal[0]) + abs(node[1] - goal[1])
 
     # Heap: (f_score, counter, node) - counter prevents comparison errors
     open_heap: List[Tuple[float, int, Tuple[int, int]]] = []
@@ -141,44 +120,55 @@ def a_star(
 
         closed_set.add(current)
 
-        for neighbor, move_cost in graph.neighbours(current):
+        for neighbour, move_cost in graph.neighbours(current):
             tentative_g = g_score[current] + move_cost
 
-            if neighbor in open_set and tentative_g < g_score.get(neighbor, float('inf')):
-                open_set.remove(neighbor)
-            if neighbor in closed_set and tentative_g < g_score.get(neighbor, float('inf')):
-                closed_set.remove(neighbor)
+            if neighbour in open_set and tentative_g < g_score.get(neighbour, float('inf')):
+                open_set.remove(neighbour)
+            if neighbour in closed_set and tentative_g < g_score.get(neighbour, float('inf')):
+                closed_set.remove(neighbour)
 
-            if neighbor in closed_set:
+            if neighbour in closed_set:
                 continue
 
-            if tentative_g < g_score.get(neighbor, float('inf')):
-                previous[neighbor] = current
-                g_score[neighbor] = tentative_g
-                f_new = tentative_g + heuristic(neighbor)
+            if tentative_g < g_score.get(neighbour, float('inf')):
+                previous[neighbour] = current
+                g_score[neighbour] = tentative_g
+                f_new = tentative_g + heuristic(neighbour)
 
-                if neighbor not in open_set and neighbor not in closed_set:
-                    heappush(open_heap, (f_new, counter, neighbor))
-                    open_set.add(neighbor)
+                if neighbour not in open_set and neighbour not in closed_set:
+                    heappush(open_heap, (f_new, counter, neighbour))
+                    open_set.add(neighbour)
                     counter += 1
 
     return previous, g_score
 
-def reconstruct_path(g_score, previous: dict,start:dict[int,int], goal:dict[int,int]) -> list[Tuple[int, int]] | None:
+def shortest_path(
+    graph: Graph,
+    start: tuple[int,int],
+    goal: tuple[int,int],
+    algorithm='dijkstra'
+) -> tuple[list[tuple[tuple[int, int], float]], float] | tuple[None, None]:
     """
-    Reconstruct path from goal to start using parent pointers.
-    Returns list of coordinates: [] or None if no path.
+    Returns (path, cost) or (None, None) if no path exists.
     """
-    if goal not in previous and start not in previous.values() and goal != start:
-        return None
+    if algorithm == 'dijkstra':
+        distances, previous = dijkstra(graph, start, goal)
+    elif algorithm == 'astar':
+        previous, distances = a_star(graph, start, goal)
+    else:
+        raise ValueError("Unknown algorithm")
 
-    path = []
+    if goal not in distances:
+        return None, None
+
+    path = [(goal, distances[goal])]
     current = goal
-    while current is not None:
-        path.append((current, g_score[current]))
-        current = previous.get(current)
-    path.reverse()
-    return path
+    while current in previous:
+        current = previous[current]
+        path.append((current, distances[current]))
+
+    return path[::-1], distances[goal]
 
 def bfs(
     graph: Graph,
@@ -199,11 +189,11 @@ def bfs(
     while queue:
         current = queue.popleft()
 
-        for neighbor, _ in graph.neighbours(current):  # ignore weight
-            if neighbor not in visited:
-                visited[neighbor] = True
-                previous[neighbor] = current
-                queue.append(neighbor)
+        for neighbour, _ in graph.neighbours(current):  # ignore weight
+            if neighbour not in visited:
+                visited[neighbour] = True
+                previous[neighbour] = current
+                queue.append(neighbour)
 
     return previous
 
