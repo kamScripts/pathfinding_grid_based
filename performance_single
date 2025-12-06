@@ -1,0 +1,50 @@
+import cProfile
+import time
+import tracemalloc
+import gc
+import pstats
+
+
+from Graph import create_grid_graph as create_light_graph
+
+
+SIZES = [
+    (100,100),
+    (500, 500),
+    (1000, 1000),
+    (2000, 2000),
+    (5000, 5000)
+]
+
+def benchmark():
+    print("GRID CREATION BENCHMARK".center(60, "="))
+    print(f"| {'1D array':^60} |")
+    print("-" * 80)
+
+    for w, h in SIZES:
+        print(f"\nTesting Graph{w}×{h}", end="")
+        gc.collect()
+        # --- Light Graph ---
+        tracemalloc.start()
+        start = time.perf_counter()
+        stats_light = cProfile.runctx(
+            'create_light_graph(w, h, seed=42)',
+            globals(),
+            locals(),
+            filename='stats_1d_array{w}.prof',
+            sort='cumulative'
+        )
+        time_light = time.perf_counter() - start
+        _, peak_light = tracemalloc.get_traced_memory()
+        tracemalloc.stop()
+
+
+        print(f"\n{w:>6}×{h:<6} | {time_light:^40.3f}s")
+        print(f"{'':>13} |{peak_light/1e6:>40.1f} MB|")
+
+if __name__ == '__main__':
+
+    #benchmark()
+    stats = pstats.Stats("stats_1d_array.prof")
+    print('dijkstra')
+    stats.strip_dirs().print_stats(10)

@@ -2,13 +2,15 @@ import cProfile
 import time
 import tracemalloc
 import gc
+import pstats
 
 
-from Grid_old import terrain_cost, create_grid_graph as create_heavy_graph
+from two_dim_graph import  create_grid_graph as create_heavy_graph
 from Graph import create_grid_graph as create_light_graph
 
 
 SIZES = [
+    (100, 100),
     (500, 500),
     (1000, 1000),
     (2000, 2000),
@@ -17,7 +19,7 @@ SIZES = [
 
 def benchmark():
     print("GRID CREATION BENCHMARK".center(80, "="))
-    print(f"{'Size':>12} | {'Heavy (dict)':>15} | {'Light (array)':>15} | {'Speedup':>10}")
+    print(f"{'Size':>12} | {'2D List':>15} | {'1D List':>15} | {'Speedup':>10}")
     print("-" * 80)
 
     for w, h in SIZES:
@@ -27,10 +29,10 @@ def benchmark():
         tracemalloc.start()
         start = time.perf_counter()
         stats_heavy = cProfile.runctx(
-            'create_heavy_graph(w, h, terrain_cost)',
+            'create_heavy_graph(w, h)',
             globals(),
             locals(),
-            filename='stats_heavy.prof',
+            filename=f'stats_2d_list{w}.prof',
             sort='cumulative'
         )
         time_heavy = time.perf_counter() - start
@@ -44,7 +46,7 @@ def benchmark():
             'create_light_graph(w, h, seed=42)',
             globals(),
             locals(),
-            filename='stats_light.prof',
+            filename=f'stats_1d_list{w}.prof',
             sort='cumulative'
         )
         time_light = time.perf_counter() - start
@@ -62,6 +64,10 @@ def benchmark():
 
 if __name__ == '__main__':
 
-    benchmark()
-
-
+    #benchmark()
+    stats = pstats.Stats("stats_2d_list{w}.prof")
+    print('A*')
+    stats.strip_dirs().print_stats(10)
+    stats = pstats.Stats("stats_1d_list{w}.prof")
+    print('dijkstra')
+    stats.strip_dirs().print_stats(10)

@@ -68,7 +68,7 @@ def dijkstra(
 
     return distances, previous
 
-def a_star(graph, start, goal):
+def a_star(graph:Graph, start:tuple, goal):
     def heuristic(node):
         return abs(node[0] - goal[0]) + abs(node[1] - goal[1])
 

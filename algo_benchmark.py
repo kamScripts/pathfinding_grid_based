@@ -3,11 +3,11 @@ import time
 import gc
 from datetime import datetime
 from Graph import create_grid_graph
-from algorithms import shortest_path
+from algorithms import dijkstra, a_star
 
 
-SIZES = [10, 50, 100, 200, 500, 1000]  # Graph size
-TRIALS = 20       # Number of benchmarks
+SIZES = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]  # Graph size
+TRIALS = 50       # Number of benchmarks
 SEED = 42         # Graph layout
 WALL_PROB = 0.10  # Wall removal probability
 ALGOS = (
@@ -19,7 +19,8 @@ def get_test_cases(width: int, height: int):
     """horizontal and diagonal start and goal vertices"""
     return [
         ("horizontal", (0, height // 2), (width - 1, height // 2)),
-        ("diagonal",   (0, 0),         (width - 1, height - 1)),
+        ("diagonal",   (0, 0), (width - 1, height - 1)),
+        ("center",   (0, height-1), (width//2, height//2)),
     ]
 
 def benchmark_running_times():
@@ -54,7 +55,7 @@ def benchmark_running_times():
             for algo in ALGOS:
                 for _ in range(TRIALS):
                     t0 = time.perf_counter()
-                    
+                    _, _ = dijkstra(graph,start,goal) if algo =='dijkstra' else a_star(graph,start,goal)
                     elapsed = time.perf_counter() - t0
 
                     times[algo].append(elapsed)

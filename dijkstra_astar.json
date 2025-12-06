@@ -1,51 +1,95 @@
 {
     "metadata": {
-        "date": "2025-12-04T18:35:38.821324",
+        "date": "2025-12-06T18:36:09.551622",
         "description": "Pathfinding running times (SECONDS)",
         "seed": 42,
         "wall_probability": 0.1,
-        "trials_per_test": 20,
+        "trials_per_test": 50,
         "variants": [
             "horizontal",
             "diagonal"
         ]
     },
     "data": {
-        "10x10": {
-            "horizontal_dijkstra": 6.4e-05,
-            "horizontal_astar": 5e-05,
-            "diagonal_dijkstra": 7.9e-05,
-            "diagonal_astar": 0.000138
-        },
-        "50x50": {
-            "horizontal_dijkstra": 0.002294,
-            "horizontal_astar": 0.001465,
-            "diagonal_dijkstra": 0.002654,
-            "diagonal_astar": 0.00454
-        },
         "100x100": {
-            "horizontal_dijkstra": 0.011092,
-            "horizontal_astar": 0.010341,
-            "diagonal_dijkstra": 0.011177,
-            "diagonal_astar": 0.018277
+            "horizontal_dijkstra": 0.011665,
+            "horizontal_astar": 0.008991,
+            "diagonal_dijkstra": 0.011565,
+            "diagonal_astar": 0.016103,
+            "center_dijkstra": 0.004713,
+            "center_astar": 0.003996
         },
         "200x200": {
-            "horizontal_dijkstra": 0.050031,
-            "horizontal_astar": 0.037235,
-            "diagonal_dijkstra": 0.048222,
-            "diagonal_astar": 0.082465
+            "horizontal_dijkstra": 0.048891,
+            "horizontal_astar": 0.031128,
+            "diagonal_dijkstra": 0.051778,
+            "diagonal_astar": 0.071204,
+            "center_dijkstra": 0.020806,
+            "center_astar": 0.017635
+        },
+        "300x300": {
+            "horizontal_dijkstra": 0.123791,
+            "horizontal_astar": 0.07522,
+            "diagonal_dijkstra": 0.135353,
+            "diagonal_astar": 0.178527,
+            "center_dijkstra": 0.052288,
+            "center_astar": 0.044418
+        },
+        "400x400": {
+            "horizontal_dijkstra": 0.240775,
+            "horizontal_astar": 0.154632,
+            "diagonal_dijkstra": 0.253204,
+            "diagonal_astar": 0.336998,
+            "center_dijkstra": 0.101726,
+            "center_astar": 0.081635
         },
         "500x500": {
-            "horizontal_dijkstra": 0.393719,
-            "horizontal_astar": 0.270434,
-            "diagonal_dijkstra": 0.403854,
-            "diagonal_astar": 0.696615
+            "horizontal_dijkstra": 0.413704,
+            "horizontal_astar": 0.226665,
+            "diagonal_dijkstra": 0.428831,
+            "diagonal_astar": 0.561656,
+            "center_dijkstra": 0.164284,
+            "center_astar": 0.127872
+        },
+        "600x600": {
+            "horizontal_dijkstra": 0.642188,
+            "horizontal_astar": 0.47664,
+            "diagonal_dijkstra": 0.77316,
+            "diagonal_astar": 0.988923,
+            "center_dijkstra": 0.267142,
+            "center_astar": 0.195911
+        },
+        "700x700": {
+            "horizontal_dijkstra": 0.953461,
+            "horizontal_astar": 0.483745,
+            "diagonal_dijkstra": 0.940218,
+            "diagonal_astar": 1.23245,
+            "center_dijkstra": 0.360753,
+            "center_astar": 0.267511
+        },
+        "800x800": {
+            "horizontal_dijkstra": 1.214692,
+            "horizontal_astar": 0.616518,
+            "diagonal_dijkstra": 1.292028,
+            "diagonal_astar": 1.650635,
+            "center_dijkstra": 0.475668,
+            "center_astar": 0.354632
+        },
+        "900x900": {
+            "horizontal_dijkstra": 1.639888,
+            "horizontal_astar": 0.802893,
+            "diagonal_dijkstra": 1.692464,
+            "diagonal_astar": 2.21366,
+            "center_dijkstra": 2e-06,
+            "center_astar": 1e-06
         },
         "1000x1000": {
-            "horizontal_dijkstra": 2.033177,
-            "horizontal_astar": 1.3517,
-            "diagonal_dijkstra": 2.073297,
-            "diagonal_astar": 3.489959
+            "horizontal_dijkstra": 2.036789,
+            "horizontal_astar": 1.044574,
+            "diagonal_dijkstra": 2.106777,
+            "diagonal_astar": 2.743064,
+            "center_dijkstra": 0.796454,
+            "center_astar": 0.59487
         }
     }
 }

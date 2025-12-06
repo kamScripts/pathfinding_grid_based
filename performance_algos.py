@@ -8,7 +8,7 @@ from Graph import create_grid_graph
 from algorithms import shortest_path
 
 
-SIZES = [50, 100, 200, 500, 1000]
+SIZES = [500, 600, 700, 800, 900]
 TRIALS = 5
 SEED = 42
 WALL_PROB = 0.10
@@ -21,6 +21,7 @@ def get_test_cases(width: int, height: int):
     return [
         ("horizontal", (0, height // 2), (width - 1, height // 2)),
         ("diagonal",   (0, 0),         (width - 1, height - 1)),
+        ("center",   (0, height-1),         (width//2, height//2)),
     ]
 
 
