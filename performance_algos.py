@@ -1,9 +1,7 @@
-# benchmark_pathfinding.py
 import cProfile
 import gc
 import time
 import tracemalloc
-import pstats
 from Graph import create_grid_graph
 from algorithms import shortest_path
 

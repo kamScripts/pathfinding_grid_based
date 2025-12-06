@@ -1,12 +1,11 @@
-from collections import  deque
+from collections import deque
 from heapq import heappop, heappush
-from typing import Dict, Tuple, List, Set
+from typing import Dict, Tuple, List
 from Graph import Graph
 
+
 def dijkstra(
-    graph: Graph,
-    start: Tuple[int, int],
-    goal: Tuple[int, int]
+    graph: Graph, start: Tuple[int, int], goal: Tuple[int, int]
 ) -> Tuple[Dict[Tuple[int, int], float], Dict[Tuple[int, int], Tuple[int, int]]]:
     """
     Dijkstra's algorithm using priority queue (heapq).
@@ -20,10 +19,8 @@ def dijkstra(
     if not graph.node_at(goal):
         raise ValueError(f"Goal {goal} out of bounds")
 
-
     # pq - Priority queue: stores (distance, coordinates)
     # heapq ensures current expands shortest path first
-    # heappush - lowest val
     pq: List[Tuple[float, Tuple[int, int]]] = []
     heappush(pq, (0, start))
 
@@ -58,7 +55,7 @@ def dijkstra(
             # Relaxation step:
             new_dist = current_dist + weight
 
-            if new_dist < distances.get(neighbour, float('inf')):
+            if new_dist < distances.get(neighbour, float("inf")):
                 # Update best known distance and parent
                 distances[neighbour] = new_dist
                 previous[neighbour] = current
@@ -68,7 +65,13 @@ def dijkstra(
 
     return distances, previous
 
-def a_star(graph:Graph, start:tuple, goal):
+
+def a_star(
+    graph: Graph, start: tuple[int,int],
+    goal:tuple[int,int]
+    ) -> tuple[
+        dict[tuple[int,int], tuple[int,int]], dict[tuple[int, int], float]
+        ]:
     def heuristic(node):
         return abs(node[0] - goal[0]) + abs(node[1] - goal[1])
 
@@ -94,7 +97,7 @@ def a_star(graph:Graph, start:tuple, goal):
         for neighbour, cost in graph.neighbours(current):
             tentative_g = g_score[current] + cost
 
-            if tentative_g < g_score.get(neighbour, float('inf')):
+            if tentative_g < g_score.get(neighbour, float("inf")):
                 previous[neighbour] = current
                 g_score[neighbour] = tentative_g
                 f_score = tentative_g + heuristic(neighbour)
@@ -105,18 +108,16 @@ def a_star(graph:Graph, start:tuple, goal):
                     counter += 1
     return previous, g_score
 
+
 def shortest_path(
-    graph: Graph,
-    start: tuple[int,int],
-    goal: tuple[int,int],
-    algorithm='dijkstra'
+    graph: Graph, start: tuple[int, int], goal: tuple[int, int], algorithm="dijkstra"
 ) -> tuple[list[tuple[tuple[int, int], float]], float] | tuple[None, None]:
     """
     Returns (path, cost) or (None, None) if no path exists.
     """
-    if algorithm == 'dijkstra':
+    if algorithm == "dijkstra":
         distances, previous = dijkstra(graph, start, goal)
-    elif algorithm == 'astar':
+    elif algorithm == "astar":
         previous, distances = a_star(graph, start, goal)
     else:
         raise ValueError("Unknown algorithm")
@@ -132,9 +133,9 @@ def shortest_path(
 
     return path[::-1], distances[goal]
 
+
 def bfs(
-    graph: Graph,
-    start: tuple[int, int]
+    graph: Graph, start: tuple[int, int]
 ) -> Dict[tuple[int, int], tuple[int, int] | None]:
     """
     Breadth-First-Search.
@@ -158,6 +159,7 @@ def bfs(
                 queue.append(neighbour)
 
     return previous
+
 
 def bfs_shortest_path(graph: Graph, start, goal):
     previous = bfs(graph, start)

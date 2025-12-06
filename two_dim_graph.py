@@ -1,8 +1,9 @@
 import random
 from typing import List, Tuple, Generator
-# TODO: REPLACE  2D ADJACENCY LIST WITH 1D LIST
+
+
 class Graph:
-    """Memory efficient Fast 1D grid graph """
+    """Memory efficient Fast 1D grid graph"""
 
     def __init__(self, width: int, height: int):
         self.width: int = width
@@ -10,7 +11,9 @@ class Graph:
         self.size: int = width * height
 
         # Each cell stores [right_cost, down_cost]
-        self.weight: List[List[int]] = [[0, 0] for _ in range(self.size)] # 1D flat list: index = y * width + x
+        self.weight: List[List[int]] = [
+            [0, 0] for _ in range(self.size)
+        ]  # 1D flat list: index = y * width + x
 
     def idx(self, x: int, y: int) -> int:
         """Returns converted 1D list index based on 2D coordinates (col,row)"""
@@ -20,7 +23,9 @@ class Graph:
         x, y = coords
         return 0 <= x < self.width and 0 <= y < self.height
 
-    def neighbours(self, coords: Tuple[int, int])->Generator[tuple[tuple[int, int], int]]:
+    def neighbours(
+        self, coords: Tuple[int, int]
+    ) -> Generator[tuple[tuple[int, int], int]]:
         x, y = coords
         w = self.weight[self.idx(x, y)]
 
@@ -28,27 +33,23 @@ class Graph:
         if x + 1 < self.width and w[0] > 0:
             yield (x + 1, y), w[0]
         # Left
-        if x > 0 and self.weight[self.idx(x-1, y)][0] > 0:
-            yield (x - 1, y), self.weight[self.idx(x-1, y)][0]
+        if x > 0 and self.weight[self.idx(x - 1, y)][0] > 0:
+            yield (x - 1, y), self.weight[self.idx(x - 1, y)][0]
         # Down
         if y + 1 < self.height and w[1] > 0:
             yield (x, y + 1), w[1]
         # Up
-        if y > 0 and self.weight[self.idx(x, y-1)][1] > 0:
-            yield (x, y - 1), self.weight[self.idx(x, y-1)][1]
+        if y > 0 and self.weight[self.idx(x, y - 1)][1] > 0:
+            yield (x, y - 1), self.weight[self.idx(x, y - 1)][1]
 
 
 def create_grid_graph(
-    width: int, height: int,
-    seed: int | str = 42,
-    wall_probability: float = 0.10
+    width: int, height: int, seed: int | str = 42, wall_probability: float = 0.10
 ) -> Graph:
-
     COSTS = (1, 2, 3)
     rnd = random.Random(seed)
     choice = rnd.choice
     rand = rnd.random
-
 
     g = Graph(width, height)
 
@@ -63,36 +64,39 @@ def create_grid_graph(
 
     return g
 
-def cost_to_color(cost):
 
+def cost_to_color(cost):
     if cost == 1:
-        return "\033[38;5;41m"       # Dark gray -light gravel path
+        return "\033[38;5;41m"  # Dark gray -light gravel path
     if cost == 2:
-        return "\033[38;5;63m"       # Green-medium forest
+        return "\033[38;5;63m"  # Green-medium forest
     if cost == 3:
-        return "\033[38;5;198m"       # Yellow-rough / rocky
+        return "\033[38;5;198m"  # Yellow-rough / rocky
     return "\033[91m"
 
-def print_grid_graph(g: Graph, path: list[tuple[tuple[int, int], float]] | None = None)->None:
+
+def print_grid_graph(
+    g: Graph, path: list[tuple[tuple[int, int], float]] | None = None
+) -> None:
     """
     CLI Graph Representation.
     Path edges and nodes in bright red.
     """
-    path_set = set(coords for coords,_ in path) if path else set()
-    width  = g.width
+    path_set = set(coords for coords, _ in path) if path else set()
+    width = g.width
     height = g.height
 
-    def is_path_edge(a: tuple[int,int], b:tuple[int,int]) -> bool:
+    def is_path_edge(a: tuple[int, int], b: tuple[int, int]) -> bool:
         return a in path_set and b in path_set
 
     # Unicode constants
-    H_LIGHT = "\u2500"   # ─ thin horizontal
-    H_HEAVY = "\u2501"   # ━ bold horizontal (path)
-    V_LIGHT = "\u2502"   # │ thin vertical
-    V_HEAVY = "\u2503"   # ┃ bold vertical (path)
+    H_LIGHT = "\u2500"  # ─ thin horizontal
+    H_HEAVY = "\u2501"  # ━ bold horizontal (path)
+    V_LIGHT = "\u2502"  # │ thin vertical
+    V_HEAVY = "\u2503"  # ┃ bold vertical (path)
 
-    NODE_EMPTY = "\u25CB"   # ○ open circle
-    NODE_PATH  = "\u25CF"   # ● filled circle
+    NODE_EMPTY = "\u25cb"  # ○ open circle
+    NODE_PATH = "\u25cf"  # ● filled circle
 
     # Column headers
     header = "  "
@@ -113,19 +117,21 @@ def print_grid_graph(g: Graph, path: list[tuple[tuple[int, int], float]] | None 
                 node_line += "   "
                 edge_line += "   "
                 continue
-            cell = g.idx(col,row)
+            cell = g.idx(col, row)
             # Node
-            node_line += f"\033[91m{NODE_PATH}\033[0m" if coords in path_set else NODE_EMPTY
+            node_line += (
+                f"\033[91m{NODE_PATH}\033[0m" if coords in path_set else NODE_EMPTY
+            )
 
             # Right edge
             if col + 1 < width:
-                w = g.weight[cell][0] if hasattr(g.weight[cell], '__getitem__') else 0
+                w = g.weight[cell][0] if hasattr(g.weight[cell], "__getitem__") else 0
                 right = (col + 1, row)
                 if w > 0:
                     if is_path_edge(coords, right):
-                        node_line += f"\033[91m{H_HEAVY*3}\033[0m"
+                        node_line += f"\033[91m{H_HEAVY * 3}\033[0m"
                     else:
-                        node_line += f"{cost_to_color(w)}{H_LIGHT*3}\033[0m"
+                        node_line += f"{cost_to_color(w)}{H_LIGHT * 3}\033[0m"
                 else:
                     node_line += "   "
 
@@ -145,15 +151,18 @@ def print_grid_graph(g: Graph, path: list[tuple[tuple[int, int], float]] | None 
         if row + 1 < height:
             print(edge_line)
 
-    #Legend
+    # Legend
     print("\nLegend:")
-    print(f"  \033[38;5;41m{H_LIGHT*3} 1 ->\033[0m  Open terrain")
-    print(f"  \033[38;5;63m{H_LIGHT*3} 2 ->\033[0m  Forest / hills")
-    print(f"  \033[38;5;198m{H_LIGHT*3} 3 ->\033[0m Mountain / rough ")
-    print(f"  \033[91m{NODE_PATH} {H_HEAVY*3} {V_HEAVY} ->\033[0m Path (highlighted in red) ")
+    print(f"  \033[38;5;41m{H_LIGHT * 3} 1 ->\033[0m  Open terrain")
+    print(f"  \033[38;5;63m{H_LIGHT * 3} 2 ->\033[0m  Forest / hills")
+    print(f"  \033[38;5;198m{H_LIGHT * 3} 3 ->\033[0m Mountain / rough ")
+    print(
+        f"  \033[91m{NODE_PATH} {H_HEAVY * 3} {V_HEAVY} ->\033[0m Path (highlighted in red) "
+    )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     gr = create_grid_graph(10, 5)
     print_grid_graph(gr)
-    for n in gr.neighbours((9,4)):
+    for n in gr.neighbours((9, 4)):
         print(n)

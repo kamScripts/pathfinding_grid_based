@@ -1,66 +1,78 @@
 import random
 from typing import Callable
+
+
 class Graph:
     """Implementation of weighted, undirected Graph with private
     _Node and _Edge classes"""
-#--------------------_Node structure for a graph----------------------------
+
+    # --------------------_Node structure for a graph----------------------------
     class _Node:
         """A node structure for undirected weighted graph."""
-        __slots__='_coords', 'neighbours'
-        def __init__(self, coords)->None:
-            """Constructor should not be called directly, only by """
+
+        __slots__ = "_coords", "neighbours"
+
+        def __init__(self, coords) -> None:
+            """Constructor should not be called directly, only by"""
             self._coords = coords
             self.neighbours = {}
+
         def get_coords(self):
             """Return value attached to the node."""
             return self._coords
+
         def __repr__(self):
             return f"Node{self._coords}"
-#-------------------- Graph Constructor----------------------------
+
+    # -------------------- Graph Constructor----------------------------
     def __init__(self, width, height):
         """Create an empty weighted graph"""
         self._nodes = {}
         self._width = width
         self._height = height
 
-    def node_at(self,coords):
+    def node_at(self, coords):
         """Return a node at coordinates (row,column)."""
         return self._nodes.get(coords)
 
-    def node_coords(self, node:_Node):
+    def node_coords(self, node: _Node):
         """Return coordinates of a Node."""
         return node.get_coords()
 
-    def add_node(self,coords:tuple[int,int])->_Node:
+    def add_node(self, coords: tuple[int, int]) -> _Node:
         """Create and return Node"""
-        if coords in self._nodes:   #if node exists get it from _nodes
+        if coords in self._nodes:  # if node exists get it from _nodes
             return self._nodes[coords]
         node = self._Node(coords)
         self._nodes[coords] = node
         return node
 
-    def  add_edge(self, origin:tuple[int, int], destination:tuple[int,int], weight=1.0)->None:
+    def add_edge(
+        self, origin: tuple[int, int], destination: tuple[int, int], weight=1.0
+    ) -> None:
         origin_node = self.add_node(origin)
         d_node = self.add_node(destination)
-     
+
         origin_node.neighbours[d_node] = weight
         d_node.neighbours[origin_node] = weight
 
-    def remove_node(self, coords:tuple[int,int])->None:
+    def remove_node(self, coords: tuple[int, int]) -> None:
         """Remove and return a node at coords (x,y)."""
-        node= self._nodes.get(coords)
-        #Remove all references
+        node = self._nodes.get(coords)
+        # Remove all references
         for neighbour in list(node.neighbours.keys()):
             del neighbour.neighbours[node]
-        #Remove a node from a Graph.
+        # Remove a node from a Graph.
         del self._nodes[coords]
 
-    def remove_edge(self, origin:tuple[int, int], destination:tuple[int, int])->None:
+    def remove_edge(
+        self, origin: tuple[int, int], destination: tuple[int, int]
+    ) -> None:
         """Remove edge between two nodes"""
         origin_node = self.node_at(origin)
         d_node = self.node_at(destination)
         if not origin_node or not d_node:
-            raise ValueError('Node not found')
+            raise ValueError("Node not found")
         if d_node in origin_node.neighbours:
             del origin_node.neighbours[d_node]
         if origin_node in d_node.neighbours:
@@ -93,16 +105,18 @@ class Graph:
     def get_weight(self, origin, destination):
         origin_node = self.node_at(origin)
         d_node = self.node_at(destination)
-        
+
         if origin_node and d_node:
             return origin_node.neighbours[d_node]
         return None
+
     def in_bounds(self, coords):
         """Check if coordinates are within graph bounds."""
         if not (isinstance(coords, tuple) and len(coords) == 2):
             return False
         x, y = coords
         return 0 <= x < self._width and 0 <= y < self._height
+
     def node_count(self):
         return len(self._nodes)
 
@@ -113,12 +127,13 @@ class Graph:
         """Quick check if two nodes have an edge."""
         return self.get_weight(src, dst) is not None
 
+
 def create_grid_graph(
     width: int,
     height: int,
     terrain_cost_func: Callable,
     seed: int | str | None = None,
-    wall_probability: float = 0.10   # 10% chance to remove edge
+    wall_probability: float = 0.10,  # 10% chance to remove edge
 ) -> Graph:
     """
     Creates a 4-connected grid graph
@@ -148,20 +163,23 @@ def create_grid_graph(
 
     return g
 
+
 def terrain_cost() -> float:
     """
     Compute the movement cost between two adjacent nodes.
     """
-    return random.choice([1,1.5,3])
+    return random.choice([1, 1.5, 3])
+
+
 def cost_to_color(cost):
-    
     if cost == 1.0:
-        return "\033[90m"       # Dark gray -light gravel path
+        return "\033[90m"  # Dark gray -light gravel path
     if cost == 1.5:
-        return "\033[32m"       # Green-medium forest
+        return "\033[32m"  # Green-medium forest
     if cost == 3.0:
-        return "\033[33m"       # Yellow-rough / rocky
+        return "\033[33m"  # Yellow-rough / rocky
     return "\033[91m"
+
 
 def print_grid_graph(g: Graph, path: list[tuple[int, int]] | None = None):
     """
@@ -171,9 +189,9 @@ def print_grid_graph(g: Graph, path: list[tuple[int, int]] | None = None):
     path_set = set(path) if path else set()
     header = "  |"  # space for row numbers
     for col in range(g._width):
-        header += f"{col:2d}   "   # two-digit columns
+        header += f"{col:2d}   "  # two-digit columns
     print(header)
-    print("  +","-"*(len(header)-6))
+    print("  +", "-" * (len(header) - 6))
     for row in range(g._height):
         node_line = f"{row:2d}| "
         edge_line = "  | "
@@ -188,9 +206,9 @@ def print_grid_graph(g: Graph, path: list[tuple[int, int]] | None = None):
                 continue
 
             if coords in path_set:
-                node_line += "\033[91m●\033[0m" # node symbol
+                node_line += "\033[91m●\033[0m"  # node symbol
             else:
-                node_line += "\u25CB"
+                node_line += "\u25cb"
 
             # Horizontal edge
             right_coords = (row, col + 1)
@@ -221,11 +239,12 @@ def print_grid_graph(g: Graph, path: list[tuple[int, int]] | None = None):
         print(node_line)
         if row + 1 < g._height:
             print(edge_line)
-    print("  +","-"*(len(header)-6))
-if __name__ == '__main__':
-    gr = create_grid_graph(10, 10, terrain_cost)
-        
-    gr.disconnect_node((5,5))
-    gr.remove_edge((0,0),(1,0))
-    print_grid_graph(gr, [(9,9),(8,9),(7,9)])
+    print("  +", "-" * (len(header) - 6))
 
+
+if __name__ == "__main__":
+    gr = create_grid_graph(10, 10, terrain_cost)
+
+    gr.disconnect_node((5, 5))
+    gr.remove_edge((0, 0), (1, 0))
+    print_grid_graph(gr, [(9, 9), (8, 9), (7, 9)])

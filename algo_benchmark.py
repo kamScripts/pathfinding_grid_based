@@ -6,22 +6,24 @@ from Graph import create_grid_graph
 from algorithms import dijkstra, a_star
 
 
-SIZES = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]  # Graph size
-TRIALS = 50       # Number of benchmarks
-SEED = 42         # Graph layout
+SIZES = [100, 200, 300, 400, 500, 600, 700, 700, 900, 1000]  # Graph size
+TRIALS = 50  # Number of benchmarks
+SEED = 42  # Graph layout
 WALL_PROB = 0.10  # Wall removal probability
 ALGOS = (
     "dijkstra",
     "astar",
-    )
+)
+
 
 def get_test_cases(width: int, height: int):
     """horizontal and diagonal start and goal vertices"""
     return [
         ("horizontal", (0, height // 2), (width - 1, height // 2)),
-        ("diagonal",   (0, 0), (width - 1, height - 1)),
-        ("center",   (0, height-1), (width//2, height//2)),
+        ("diagonal", (0, 0), (width - 1, height - 1)),
+        ("center", (0, height - 1), (width // 2, height // 2)),
     ]
+
 
 def benchmark_running_times():
     results = {
@@ -31,14 +33,14 @@ def benchmark_running_times():
             "seed": SEED,
             "wall_probability": WALL_PROB,
             "trials_per_test": TRIALS,
-            "variants": ["horizontal", "diagonal"]
+            "variants": ["horizontal", "diagonal"],
         },
-        "data": {}
+        "data": {},
     }
 
-    print("=" * 80)
-    print("PATH-FINDING ALGORITHMS BENCHMARK".center(80))
-    print("=" * 80)
+    print("=" * 70)
+    print("PATH-FINDING ALGORITHMS BENCHMARK".center(70))
+    print("=" * 70)
 
     for size in SIZES:
         width = height = size
@@ -50,18 +52,24 @@ def benchmark_running_times():
         for variant_name, start, goal in get_test_cases(width, height):
             print(f"  {variant_name:12} | Start {start} -> Goal {goal}")
 
-            times = {algo:[] for algo in ALGOS}
+            times = {algo: [] for algo in ALGOS}
 
             for algo in ALGOS:
                 for _ in range(TRIALS):
                     t0 = time.perf_counter()
-                    _, _ = dijkstra(graph,start,goal) if algo =='dijkstra' else a_star(graph,start,goal)
+                    _, _ = (
+                        dijkstra(graph, start, goal)
+                        if algo == "dijkstra"
+                        else a_star(graph, start, goal)
+                    )
                     elapsed = time.perf_counter() - t0
 
                     times[algo].append(elapsed)
 
                 avg_time = sum(times[algo]) / TRIALS
-                results["data"][f"{size}x{size}"][f"{variant_name}_{algo}"] = round(avg_time, 6)
+                results["data"][f"{size}x{size}"][f"{variant_name}_{algo}"] = round(
+                    avg_time, 6
+                )
 
                 print(f"    {algo:9}: {avg_time:>8.5f} s (avg over {TRIALS} runs)")
 
@@ -72,11 +80,12 @@ def benchmark_running_times():
     with open("dijkstra_astar.json", "w", encoding="utf-8") as f:
         json.dump(results, f, indent=4)
 
-    print("\n" + "=" * 80)
-    print("BENCHMARK COMPLETE - Results saved to running_times.json".center(80))
-    print("=" * 80)
+    print("\n" + "=" * 70)
+    print("BENCHMARK COMPLETE - Results saved to running_times.json".center(70))
+    print("=" * 70)
 
     return results
+
 
 if __name__ == "__main__":
     benchmark_running_times()
