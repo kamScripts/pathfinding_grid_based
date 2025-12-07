@@ -39,11 +39,11 @@ class App:
         "Print Current Grid",
     ]
     ALGO_MENU: list[str] = [  # algorithms menu
-        "Choose Algorithm:",
-        "Dijkstra",
-        "A* (Manhattan distance)",
-        f"b {ARR0W} Back",
-        f"q {ARR0W} Quit",
+        " Choose Algorithm:",
+        "1. Dijkstra",
+        "2. A* (Manhattan distance)",
+        f"3. b {ARR0W} Back",
+        f"4. q {ARR0W} Quit",
     ]
     HEADER: list[str] = [  # header content
         "GRID-BASED PATH-FINDING VISUALIZER",

@@ -1,5 +1,4 @@
 import random
-import time
 from typing import List, Tuple, Generator
 
 # Terrain cost
@@ -22,7 +21,7 @@ class Graph:
     Each cell stores outgoing edge weights: [right_cost, down_cost].
     A weight of 0 means no edge between vertex a and b (blocked).    
     Internal representation: 1D list indexed by y * width + x
-    External representation: 2D grid indexed by (x, y)
+    External representation: 2D grid indexed by (x, y).
     """
 
     def __init__(self, width: int, height: int):
@@ -30,7 +29,8 @@ class Graph:
         self.width: int = width
         self.height: int = height
         self.size: int = width * height
-        self.weight: List[List[int]] = [ #[right_cost, down_cost]; 0 = no edge
+        # Adjacency List
+        self.weight: List[List[int]] = [
             [0, 0] for _ in range(self.size)
         ]
 
@@ -62,23 +62,23 @@ class Graph:
         # Down edge
         if y + 1 < self.height and w[1] > 0:
             yield (x, y + 1), w[1]
-        # Up - check the upper vertex' right edge
+        # Up - check the upper vertex' down edge
         if y > 0 and self.weight[self.idx(x, y - 1)][1] > 0:
             yield (x, y - 1), self.weight[self.idx(x, y - 1)][1]
 
 
 def create_grid_graph(
-    width: int, height: int, seed: int | None = None, wall_probability: float = 0.10
+    width: int, height: int, seed: int | str = "Ucen2025", wall_probability: float = 0.10
 ) -> Graph:
     """
-    Generate a random graph with reproducible
-    layout when the same seed and wall probability is used.    
-    Edges are placed randomly inversely proportional to 
+    Generate a graph with layout based seed parameter value used
+    in random.Random and wall_probability parameter.    
+    Edges are added with inverse probability to 
     wall_probability value.
     wall_probability = 0.1 -> 90 % to create an edge.
-    
+    Cost added randomly based on random.choice(seed)
     """
-    rnd = random.Random(seed) if seed else random.Random(int(time.time()))
+    rnd = random.Random(seed)
     g = Graph(width, height)
 
     for y in range(height):
@@ -98,58 +98,55 @@ def create_grid_graph(
 
 
 def cost_to_color(cost: int) -> str:
-    """Convert weight to color."""
+    """Convert terrain cost to ANSI color."""
     if cost == 1:
-        return "\033[38;5;41m"  # Dark gray - light gravel path
+        return "\033[38;5;41m"  # Dark gray - light terrain
     if cost == 2:
-        return "\033[38;5;63m"  # Green - medium forest
+        return "\033[38;5;63m"  # Green - medium terrain
     if cost == 3:
-        return "\033[38;5;198m"  # Purple - rough / rocky
-    return "\033[{PATH}"
-
+        return "\033[38;5;198m"  # Purple - rough terrain
+    return "\033[{PATH}"    # path colour
 
 def print_grid_graph(
     g: Graph, path: list[tuple[tuple[int, int], float]] | None = None
 ) -> None:
     """
-    CLI Graph Representation.
-    Path edges and nodes in bright red.
+    Display the grid  to command-line terminal with colored terrain
+    and highlighted path if found.    
+    Uses Unicode box-drawing for edges, empty circles
+    for not visited vertices.
+    Path is shown in bright distinguish colour with bold lines
+    for edges and full coloured circles for visited vertices.
     """
     path_set = set(coords for coords, _ in path) if path else set()
-    width = g.width
-    height = g.height
 
     def is_path_edge(a: tuple[int, int], b: tuple[int, int]) -> bool:
+        """Membership testing - helper function."""
         return a in path_set and b in path_set
 
     # Column headers
     header = "  "
-    for col in range(width):
+    for col in range(g.width):
         header += f"{col:02d}".center(4)
     print(header)
     print()
 
-    # Grid rows labels
-    for row in range(height):
-        node_line = f"{row:02d}  "
+    # Build two rows at the time (vertices row and down edges row)
+    for row in range(g.height):
+        node_line = f"{row:02d}  " # Grid rows labels
         edge_line = "    "
 
-        for col in range(width):
-            coords = (col, row)  # (x, y)
+        for col in range(g.width):
+            coords = (col, row)
 
-            if not g.node_at(coords):
-                node_line += "   "
-                edge_line += "   "
-                continue
-            cell = g.idx(col, row)
-            # Node
+            cell = g.idx(col, row) # current vertex
             node_line += (
-                f"\033[{PATH}{NODE_PATH}\033[0m" if coords in path_set else NODE_EMPTY
+                f"\033[{PATH}{NODE_PATH}\033[0m" if coords in path_set else NODE_EMPTY # Node symbol
             )
 
             # Right edge
-            if col + 1 < width:
-                w = g.weight[cell][0] if hasattr(g.weight[cell], "__getitem__") else 0
+            if col + 1 < g.width:
+                w = g.weight[cell][0]
                 right = (col + 1, row)
                 if w > 0:
                     if is_path_edge(coords, right):
@@ -160,7 +157,7 @@ def print_grid_graph(
                     node_line += "   "
 
             # Down edge (printed on next line)
-            if row + 1 < height:
+            if row + 1 < g.height:
                 w = g.weight[cell][1]
                 down = (col, row + 1)
                 if w > 0:
@@ -170,9 +167,9 @@ def print_grid_graph(
                         edge_line += f"{cost_to_color(w)}{V_LIGHT}   \033[0m"
                 else:
                     edge_line += "    "
-
+    # Print both rows
         print(node_line)
-        if row + 1 < height:
+        if row + 1 < g.height:
             print(edge_line)
 
     # Legend
