@@ -8,10 +8,12 @@ def dijkstra(
     graph: Graph, start: Tuple[int, int], goal: Tuple[int, int]
 ) -> Tuple[Dict[Tuple[int, int], float], Dict[Tuple[int, int], Tuple[int, int]]]:
     """
-    Dijkstra's algorithm using priority queue (heapq).
-    Returns
-        distances: best known distance from start to each node
-        previous: parent pointer for path reconstruction
+    Dijkstra's algorithm using a priority queue (heapq).
+    Explores nodes in order of increasing distance from start.
+    Guaranteed to find the shortest path in graphs with non-negative weights.
+    Returns:
+        distances = best known distance from start to each reachable node
+        previous = parent map for path reconstruction
     """
 
     if not graph.node_at(start):
@@ -20,7 +22,6 @@ def dijkstra(
         raise ValueError(f"Goal {goal} out of bounds")
 
     # pq - Priority queue: stores (distance, coordinates)
-    # heapq ensures current expands shortest path first
     pq: List[Tuple[float, Tuple[int, int]]] = []
     heappush(pq, (0, start))
 
@@ -52,7 +53,7 @@ def dijkstra(
             if neighbour in visited:
                 continue
 
-            # Relaxation step:
+            # Relaxation step
             new_dist = current_dist + weight
 
             if new_dist < distances.get(neighbour, float("inf")):
@@ -69,41 +70,49 @@ def dijkstra(
 def a_star(
     graph: Graph, start: tuple[int,int],
     goal:tuple[int,int]
-    ) -> tuple[
-        dict[tuple[int,int], tuple[int,int]], dict[tuple[int, int], float]
-        ]:
+    ) -> tuple[dict[tuple[int,int], tuple[int,int]], dict[tuple[int, int], float]]:
+    """
+    A* path search algorithm using a priority queue (heapq).
+    Returns:
+        previous  - parent pointer map for reconstructing the path
+        g_score   - exact cost from start to each visited node
+    """
     def heuristic(node):
+        """Heuristic distance from start to the goal,
+        using Manhattan distance for grid based maps."""
         return abs(node[0] - goal[0]) + abs(node[1] - goal[1])
 
-    open_heap = []
+    pq = []
+    # tie-breaking - prevents a bug when two vertices have the same f_score
     counter = 0
-    heappush(open_heap, (heuristic(start), counter, start))
+    heappush(pq, (heuristic(start), counter, start)) # (f_score, tie-breaker counter, vertex)
     counter += 1
 
     open_set = {start}
     g_score = {start: 0.0}
     previous = {}
 
-    while open_heap:
-        _, _, current = heappop(open_heap)
+    while pq:
+        _, _, current = heappop(pq) # discovery vertex
         if current in open_set:
             open_set.remove(current)
         else:
             continue
 
-        if current == goal:
+        if current == goal: # end loop if goal found
             return previous, g_score
 
         for neighbour, cost in graph.neighbours(current):
             tentative_g = g_score[current] + cost
 
             if tentative_g < g_score.get(neighbour, float("inf")):
+                # Better path to neighbour discovered
                 previous[neighbour] = current
                 g_score[neighbour] = tentative_g
                 f_score = tentative_g + heuristic(neighbour)
 
                 if neighbour not in open_set:
-                    heappush(open_heap, (f_score, counter, neighbour))
+                    heappush(pq, (f_score, counter, neighbour))
                     open_set.add(neighbour)
                     counter += 1
     return previous, g_score
@@ -113,7 +122,11 @@ def shortest_path(
     graph: Graph, start: tuple[int, int], goal: tuple[int, int], algorithm="dijkstra"
 ) -> tuple[list[tuple[tuple[int, int], float]], float] | tuple[None, None]:
     """
-    Returns (path, cost) or (None, None) if no path exists.
+    Prepare Path and total cost from start to the based on
+    either Dijkstra or A* Search.
+    Returns:
+        List of (node, cumulative_cost) from start to the goal, and total cost
+        None if no path exists
     """
     if algorithm == "dijkstra":
         distances, previous = dijkstra(graph, start, goal)
@@ -138,8 +151,9 @@ def bfs(
     graph: Graph, start: tuple[int, int]
 ) -> Dict[tuple[int, int], tuple[int, int] | None]:
     """
-    Breadth-First-Search.
-    Returns previous dict where previous[node] = parent
+    Breadth-First Search  best for unweighted or same-cost grids.
+    Returns:
+        parent map (previous dictionary) where previous[node] = parent.
     """
 
     previous: Dict[tuple[int, int], tuple[int, int] | None] = {}
@@ -161,14 +175,19 @@ def bfs(
     return previous
 
 
-def bfs_shortest_path(graph: Graph, start, goal):
+def bfs_shortest_path(graph: Graph, start, goal)->list[tuple[int,int]] | None:
+    """
+    Helper function that returns a list of coordinates
+    from start to the goal on unweighted graph.
+    """
     previous = bfs(graph, start)
     if goal not in previous:
         return None
 
-    path = []
+    path: List[Tuple[int, int]] = []
     current = goal
     while current is not None:
         path.append(current)
         current = previous[current]
-    return path[::-1]
+    path.reverse()
+    return path
