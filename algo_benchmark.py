@@ -88,4 +88,6 @@ def benchmark_running_times():
 
 
 if __name__ == "__main__":
-    benchmark_running_times()
+   # benchmark_running_times()
+   grid = create_grid_graph(50,50, wall_probability=0.2)
+   distances,prev =dijkstra

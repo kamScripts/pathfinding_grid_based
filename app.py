@@ -111,7 +111,7 @@ class App:
         width: int = self.get_input("Enter width: ", int)
         height: int = self.get_input("Enter height: ", int)
         seed_input: str = self.get_input("Enter seed or press Enter for random: ", str)
-        seed = int(seed_input) if seed_input else int(time.time())
+        seed = seed_input if seed_input else int(time.time())
         wall_prob: float = self.get_input(
             "Wall-removal probability (0.0-1.0, default 0.1): ", float
         )
