@@ -6,7 +6,7 @@ from Graph import create_grid_graph
 from algorithms import shortest_path
 
 
-SIZES = [500, 600, 700, 800, 900]
+SIZES = [50,100,150,200]
 TRIALS = 5
 SEED = 42
 WALL_PROB = 0.10

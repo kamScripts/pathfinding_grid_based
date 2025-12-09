@@ -6,13 +6,13 @@ from Graph import create_grid_graph
 from algorithms import dijkstra, a_star
 
 
-SIZES = [100, 200, 300, 400, 500, 600, 700, 700, 900, 1000]  # Graph size
+SIZES = [50,100, 150, 200, 250, 300, 500, 1000]  # Graph size
 TRIALS = 50  # Number of benchmarks
 SEED = 42  # Graph layout
 WALL_PROB = 0.10  # Wall removal probability
 ALGOS = (
-    "dijkstra",
-    "astar",
+    'dijkstra',
+    'a_star',
 )
 
 
@@ -57,21 +57,21 @@ def benchmark_running_times():
             for algo in ALGOS:
                 for _ in range(TRIALS):
                     t0 = time.perf_counter()
-                    _, _ = (
-                        dijkstra(graph, start, goal)
-                        if algo == "dijkstra"
-                        else a_star(graph, start, goal)
-                    )
+                    if algo == "dijkstra":
+                        dist, _ = dijkstra(graph,start,goal)
+                    else:
+                        _,dist = a_star(graph, start, goal)
                     elapsed = time.perf_counter() - t0
 
                     times[algo].append(elapsed)
 
                 avg_time = sum(times[algo]) / TRIALS
+                results["data"][f"{size}x{size}"][f"{variant_name}_{algo}_cost"] = dist[goal]
                 results["data"][f"{size}x{size}"][f"{variant_name}_{algo}"] = round(
                     avg_time, 6
                 )
 
-                print(f"    {algo:9}: {avg_time:>8.5f} s (avg over {TRIALS} runs)")
+                print(f"    {algo:9}: {avg_time:>8.5f} s (avg over {TRIALS} runs) and cost {dist[goal]} ")
 
         del graph
         gc.collect()
@@ -81,15 +81,18 @@ def benchmark_running_times():
         json.dump(results, f, indent=4)
 
     print("\n" + "=" * 70)
-    print("BENCHMARK COMPLETE - Results saved to running_times.json".center(70))
+    print("BENCHMARK COMPLETE - Results saved to running_times_1.5D.json".center(70))
     print("=" * 70)
 
     return results
 
 
 if __name__ == "__main__":
-    # benchmark_running_times()
-    grid = create_grid_graph(50,50, wall_probability=0.1)
-    distances,prev =dijkstra(grid,(0,0),(49,49))
-    previous,g_score = a_star(grid,(0,0),(49,49))
-    print(f'dijkstra: {len(distances)}, A*: {len(g_score)}')
+    #benchmark_running_times()
+    print('\n')
+    for size in SIZES:
+        grid = create_grid_graph(size,size, wall_probability=0.1)
+        a,b,c = get_test_cases(size,size)
+        distances,prev =dijkstra(grid,(0,0),b[2])
+        previous,g_score = a_star(grid,(0,0),b[2])
+        print(f'vertices count: {size*size} dijkstra nodes explored: {len(distances)} dijkstra cost: {distances[b[2]]}, A* explored: {len(g_score)} A* cost: {g_score[b[2]]}')

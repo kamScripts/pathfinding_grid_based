@@ -1,6 +1,6 @@
 {
     "metadata": {
-        "date": "2025-12-06T18:36:09.551622",
+        "date": "2025-12-09T22:41:04.441586",
         "description": "Pathfinding running times (SECONDS)",
         "seed": 42,
         "wall_probability": 0.1,
@@ -11,85 +11,117 @@
         ]
     },
     "data": {
+        "50x50": {
+            "horizontal_dijkstra_cost": 86,
+            "horizontal_dijkstra": 0.002619,
+            "horizontal_a_star_cost": 87.0,
+            "horizontal_a_star": 0.000391,
+            "diagonal_dijkstra_cost": 137,
+            "diagonal_dijkstra": 0.002849,
+            "diagonal_a_star_cost": 142.0,
+            "diagonal_a_star": 0.000567,
+            "center_dijkstra_cost": 68,
+            "center_dijkstra": 0.001076,
+            "center_a_star_cost": 72.0,
+            "center_a_star": 0.000189
+        },
         "100x100": {
-            "horizontal_dijkstra": 0.011665,
-            "horizontal_astar": 0.008991,
-            "diagonal_dijkstra": 0.011565,
-            "diagonal_astar": 0.016103,
-            "center_dijkstra": 0.004713,
-            "center_astar": 0.003996
+            "horizontal_dijkstra_cost": 187,
+            "horizontal_dijkstra": 0.012779,
+            "horizontal_a_star_cost": 189.0,
+            "horizontal_a_star": 0.005702,
+            "diagonal_dijkstra_cost": 266,
+            "diagonal_dijkstra": 0.012601,
+            "diagonal_a_star_cost": 277.0,
+            "diagonal_a_star": 0.001588,
+            "center_dijkstra_cost": 139,
+            "center_dijkstra": 0.004959,
+            "center_a_star_cost": 146.0,
+            "center_a_star": 0.000508
+        },
+        "150x150": {
+            "horizontal_dijkstra_cost": 270,
+            "horizontal_dijkstra": 0.032508,
+            "horizontal_a_star_cost": 274.0,
+            "horizontal_a_star": 0.010205,
+            "diagonal_dijkstra_cost": 409,
+            "diagonal_dijkstra": 0.032261,
+            "diagonal_a_star_cost": 427.0,
+            "diagonal_a_star": 0.004764,
+            "center_dijkstra_cost": 208,
+            "center_dijkstra": 0.012264,
+            "center_a_star_cost": 216.0,
+            "center_a_star": 0.000914
         },
         "200x200": {
-            "horizontal_dijkstra": 0.048891,
-            "horizontal_astar": 0.031128,
-            "diagonal_dijkstra": 0.051778,
-            "diagonal_astar": 0.071204,
-            "center_dijkstra": 0.020806,
-            "center_astar": 0.017635
+            "horizontal_dijkstra_cost": 364,
+            "horizontal_dijkstra": 0.055341,
+            "horizontal_a_star_cost": 364.0,
+            "horizontal_a_star": 0.014556,
+            "diagonal_dijkstra_cost": 537,
+            "diagonal_dijkstra": 0.058431,
+            "diagonal_a_star_cost": 567.0,
+            "diagonal_a_star": 0.002299,
+            "center_dijkstra_cost": 270,
+            "center_dijkstra": 0.022432,
+            "center_a_star_cost": 279.0,
+            "center_a_star": 0.001136
+        },
+        "250x250": {
+            "horizontal_dijkstra_cost": 447,
+            "horizontal_dijkstra": 0.091075,
+            "horizontal_a_star_cost": 452.0,
+            "horizontal_a_star": 0.024748,
+            "diagonal_dijkstra_cost": 675,
+            "diagonal_dijkstra": 0.096785,
+            "diagonal_a_star_cost": 716.0,
+            "diagonal_a_star": 0.00433,
+            "center_dijkstra_cost": 335,
+            "center_dijkstra": 0.041164,
+            "center_a_star_cost": 350.0,
+            "center_a_star": 0.000974
         },
         "300x300": {
-            "horizontal_dijkstra": 0.123791,
-            "horizontal_astar": 0.07522,
-            "diagonal_dijkstra": 0.135353,
-            "diagonal_astar": 0.178527,
-            "center_dijkstra": 0.052288,
-            "center_astar": 0.044418
-        },
-        "400x400": {
-            "horizontal_dijkstra": 0.240775,
-            "horizontal_astar": 0.154632,
-            "diagonal_dijkstra": 0.253204,
-            "diagonal_astar": 0.336998,
-            "center_dijkstra": 0.101726,
-            "center_astar": 0.081635
+            "horizontal_dijkstra_cost": 543,
+            "horizontal_dijkstra": 0.146295,
+            "horizontal_a_star_cost": 546.0,
+            "horizontal_a_star": 0.038475,
+            "diagonal_dijkstra_cost": 808,
+            "diagonal_dijkstra": 0.15406,
+            "diagonal_a_star_cost": 857.0,
+            "diagonal_a_star": 0.003373,
+            "center_dijkstra_cost": 409,
+            "center_dijkstra": 0.057776,
+            "center_a_star_cost": 432.0,
+            "center_a_star": 0.001538
         },
         "500x500": {
-            "horizontal_dijkstra": 0.413704,
-            "horizontal_astar": 0.226665,
-            "diagonal_dijkstra": 0.428831,
-            "diagonal_astar": 0.561656,
-            "center_dijkstra": 0.164284,
-            "center_astar": 0.127872
-        },
-        "600x600": {
-            "horizontal_dijkstra": 0.642188,
-            "horizontal_astar": 0.47664,
-            "diagonal_dijkstra": 0.77316,
-            "diagonal_astar": 0.988923,
-            "center_dijkstra": 0.267142,
-            "center_astar": 0.195911
-        },
-        "700x700": {
-            "horizontal_dijkstra": 0.953461,
-            "horizontal_astar": 0.483745,
-            "diagonal_dijkstra": 0.940218,
-            "diagonal_astar": 1.23245,
-            "center_dijkstra": 0.360753,
-            "center_astar": 0.267511
-        },
-        "800x800": {
-            "horizontal_dijkstra": 1.214692,
-            "horizontal_astar": 0.616518,
-            "diagonal_dijkstra": 1.292028,
-            "diagonal_astar": 1.650635,
-            "center_dijkstra": 0.475668,
-            "center_astar": 0.354632
-        },
-        "900x900": {
-            "horizontal_dijkstra": 1.639888,
-            "horizontal_astar": 0.802893,
-            "diagonal_dijkstra": 1.692464,
-            "diagonal_astar": 2.21366,
-            "center_dijkstra": 2e-06,
-            "center_astar": 1e-06
+            "horizontal_dijkstra_cost": 892,
+            "horizontal_dijkstra": 0.489073,
+            "horizontal_a_star_cost": 892.0,
+            "horizontal_a_star": 0.117765,
+            "diagonal_dijkstra_cost": 1340,
+            "diagonal_dijkstra": 0.513243,
+            "diagonal_a_star_cost": 1435.0,
+            "diagonal_a_star": 0.016102,
+            "center_dijkstra_cost": 678,
+            "center_dijkstra": 0.185307,
+            "center_a_star_cost": 724.0,
+            "center_a_star": 0.003714
         },
         "1000x1000": {
-            "horizontal_dijkstra": 2.036789,
-            "horizontal_astar": 1.044574,
-            "diagonal_dijkstra": 2.106777,
-            "diagonal_astar": 2.743064,
-            "center_dijkstra": 0.796454,
-            "center_astar": 0.59487
+            "horizontal_dijkstra_cost": 1761,
+            "horizontal_dijkstra": 2.387435,
+            "horizontal_a_star_cost": 1764.0,
+            "horizontal_a_star": 0.514366,
+            "diagonal_dijkstra_cost": 2646,
+            "diagonal_dijkstra": 2.47128,
+            "diagonal_a_star_cost": 2848.0,
+            "diagonal_a_star": 0.022025,
+            "center_dijkstra_cost": 1335,
+            "center_dijkstra": 0.97998,
+            "center_a_star_cost": 1416.0,
+            "center_a_star": 0.007747
         }
     }
 }
