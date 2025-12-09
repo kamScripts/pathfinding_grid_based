@@ -80,7 +80,7 @@ def a_star(
     def heuristic(node):
         """Heuristic estimate from start to the goal,
         using Manhattan distance for grid based maps."""
-        return abs(node[0] - goal[0]) + abs(node[1] - goal[1])
+        return 2*(abs(node[0] - goal[0]) + abs(node[1] - goal[1]))
 
     pq = []
     # tie-breaking - prevents a bug when two vertices have the same f_score
@@ -91,12 +91,13 @@ def a_star(
     open_set = {start}
     g_score = {start: 0.0}
     previous = {}
+    closed_set = set()
 
     while pq:
         _, _, current = heappop(pq) # discovery vertex
         if current not in open_set:
             continue
-
+        
         open_set.remove(current)
 
         if current == goal: # end loop if goal found

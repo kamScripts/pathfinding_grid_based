@@ -88,6 +88,8 @@ def benchmark_running_times():
 
 
 if __name__ == "__main__":
-   # benchmark_running_times()
-   grid = create_grid_graph(50,50, wall_probability=0.2)
-   distances,prev =dijkstra
+    # benchmark_running_times()
+    grid = create_grid_graph(50,50, wall_probability=0.1)
+    distances,prev =dijkstra(grid,(0,0),(49,49))
+    previous,g_score = a_star(grid,(0,0),(49,49))
+    print(f'dijkstra: {len(distances)}, A*: {len(g_score)}')
