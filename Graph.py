@@ -12,7 +12,7 @@ V_LIGHT = "\u2502"      # │ thin vertical
 V_HEAVY = "\u2503"      # ┃ bold vertical (path)
 
 NODE_EMPTY = "\u25cb"   # ○ open circle
-NODE_PATH = "\u25cf"    # ● filled circle
+NODE_PATH = "\u25cf"    # ● filled circle (path)
 
 
 class Graph:

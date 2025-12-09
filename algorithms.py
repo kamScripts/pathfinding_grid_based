@@ -78,7 +78,7 @@ def a_star(
         g_score   - exact cost from start to each visited node
     """
     def heuristic(node):
-        """Heuristic distance from start to the goal,
+        """Heuristic estimate from start to the goal,
         using Manhattan distance for grid based maps."""
         return abs(node[0] - goal[0]) + abs(node[1] - goal[1])
 
@@ -94,10 +94,10 @@ def a_star(
 
     while pq:
         _, _, current = heappop(pq) # discovery vertex
-        if current in open_set:
-            open_set.remove(current)
-        else:
+        if current not in open_set:
             continue
+
+        open_set.remove(current)
 
         if current == goal: # end loop if goal found
             return previous, g_score
