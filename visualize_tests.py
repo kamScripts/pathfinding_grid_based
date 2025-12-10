@@ -14,8 +14,8 @@ def plot_pathfinding_benchmark(json_file="dijkstra_astar.json"):
 
     # Extract data for all three variants
     variants = ["horizontal", "diagonal", "center"]
-    colors = {"dijkstra": "#d62728", "astar": "#1f77b4"}  # Red & Blue
-    markers = {"dijkstra": "s", "astar": "o"}  # Square & Circle
+    colors = {"dijkstra": "#d62728", "astar": "#1f77b4"}  
+    markers = {"dijkstra": "s", "astar": "o"}  
     linestyles = {"dijkstra": "-", "astar": "--"}
 
     # Prepare figure: 1 row, 3 columns

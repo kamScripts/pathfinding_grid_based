@@ -8,7 +8,7 @@ from Graph import Graph, create_grid_graph, print_grid_graph
 
 class App:
     """
-    A terminal-based interactive path=finding visualizer supporting Dijkstra's algorithm
+    A terminal-based interactive pathfinding visualizer supporting Dijkstra's algorithm
     and A* with Manhattan distance heuristic on weighted grid graphs.
 
     Features:

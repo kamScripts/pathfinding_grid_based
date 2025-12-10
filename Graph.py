@@ -1,3 +1,4 @@
+"""Graph data structure and grid graph generation for path-finding visualizer."""
 import random
 from typing import List, Tuple, Generator
 

@@ -68,7 +68,7 @@ def benchmark_pathfinding():
                     # Save profile only for first trial
                     if trial == 0:
                         profile_file = f"profile_{algo}_{size}_{variant_name}.prof"
-                        profiler.dump_stats(profile_file)
+                        #profiler.dump_stats(profile_file)
 
                 avg_time = sum(times) / TRIALS
                 avg_peak_mb = sum(peaks) / TRIALS / 1e6
@@ -94,12 +94,12 @@ def benchmark_pathfinding():
 
 
 if __name__ == "__main__":
-    #benchmark_pathfinding()
+    benchmark_pathfinding()
 
-    stats = pstats.Stats("profile_astar_1000_diagonal.prof").sort_stats("calls")
-    print('A*')
-    stats.strip_dirs().print_stats(10)
-    stats = pstats.Stats("profile_dijkstra_1000_diagonal.prof")
-    print('dijkstra')
-    stats.strip_dirs().print_stats(10)
+    #stats = pstats.Stats("profile_astar_1000_diagonal.prof").sort_stats("calls")
+    #print('A*')
+    #stats.strip_dirs().print_stats(10)
+    #stats = pstats.Stats("profile_dijkstra_1000_diagonal.prof")
+    #print('dijkstra')
+    #stats.strip_dirs().print_stats(10)
     
