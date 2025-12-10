@@ -478,3 +478,4 @@ This project is open source and available under the MIT License.
 ## Author
 
 **kamScripts** - Grid-Based Pathfinding Visualizer Project
+**Github copilot** - readme.md
