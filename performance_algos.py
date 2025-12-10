@@ -2,11 +2,14 @@ import cProfile
 import gc
 import time
 import tracemalloc
+import pstats
 from Graph import create_grid_graph
 from algorithms import shortest_path
 
 
-SIZES = [50,100,150,200]
+
+
+SIZES = [50,100,200,300,400,500,1000]
 TRIALS = 5
 SEED = 42
 WALL_PROB = 0.10
@@ -91,12 +94,12 @@ def benchmark_pathfinding():
 
 
 if __name__ == "__main__":
-    benchmark_pathfinding()
-    
-    #stats = pstats.Stats("profile_astar_1000_horizontal.prof")
-    #print('A*')
-    #stats.strip_dirs().print_stats(10)
-    #stats = pstats.Stats("profile_dijkstra_1000_horizontal.prof")
-    #print('dijkstra')
-    #stats.strip_dirs().print_stats(10)
+    #benchmark_pathfinding()
+
+    stats = pstats.Stats("profile_astar_1000_diagonal.prof").sort_stats("calls")
+    print('A*')
+    stats.strip_dirs().print_stats(10)
+    stats = pstats.Stats("profile_dijkstra_1000_diagonal.prof")
+    print('dijkstra')
+    stats.strip_dirs().print_stats(10)
     

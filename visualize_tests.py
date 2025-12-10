@@ -27,7 +27,7 @@ def plot_pathfinding_benchmark(json_file="dijkstra_astar.json"):
         # Dijkstra
         dijk_times = [results[f"{s}x{s}"][f"{variant}_dijkstra"] for s in sizes]
         # A*
-        astar_times = [results[f"{s}x{s}"][f"{variant}_astar"] for s in sizes]
+        astar_times = [results[f"{s}x{s}"][f"{variant}_a_star"] for s in sizes]
 
         ax.plot(
             sizes,

@@ -95,4 +95,5 @@ if __name__ == "__main__":
         a,b,c = get_test_cases(size,size)
         distances,prev =dijkstra(grid,(0,0),b[2])
         previous,g_score = a_star(grid,(0,0),b[2])
-        print(f'vertices count: {size*size} dijkstra nodes explored: {len(distances)} dijkstra cost: {distances[b[2]]}, A* explored: {len(g_score)} A* cost: {g_score[b[2]]}')
+        print(f'vertices count: {size*size} \n\tdijkstra nodes explored: {len(distances)} dijkstra cost: {distances[b[2]]}, \n\t{' '*12}A* explored: {len(g_score)} {' '*7}A* cost: {g_score[b[2]]}')
+    print('\n')
