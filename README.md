@@ -466,7 +466,7 @@ Python Software Foundation. (2025) heapq - Heap queue algorithm. Python Docs. [O
 Rajesh Kumar. (2024) The A* Algorithm: A Complete Guide. Datacamp. [Online] [9th December 2025] https://www.datacamp.com/tutorial/a-star-algorithm
 Red Blob Games. (2023) Implementation of A*. Red Blob Games. [Online] [Accessed on 7th December] https://www.redblobgames.com/pathfinding/a-star/implementation.html
 
-
+Github copilot - readme.md
 ---
 
 ## License
@@ -478,4 +478,4 @@ This project is open source and available under the MIT License.
 ## Author
 
 **kamScripts** - Grid-Based Pathfinding Visualizer Project
-**Github copilot** - readme.md
+
